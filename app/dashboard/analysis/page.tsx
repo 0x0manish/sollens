@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
 import { TokenAnalysis } from "@/components/TokenAnalysis"
+import { TokenSearchForm } from "@/components/TokenSearchForm"
 
 // Define types for the async params
 type PageProps = {
@@ -41,11 +42,12 @@ export default async function TokenAnalysisPage({ params, searchParams }: PagePr
 
       {/* Dashboard Content */}
       <main className="container mx-auto px-4 py-10 flex-grow">
-        {/* Back button */}
-        <Link href="/dashboard" className="inline-flex items-center text-slate-300 hover:text-white mb-6">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Dashboard
-        </Link>
+        {/* Search box centered */}
+        <div className="mb-8 flex justify-center">
+          <div className="w-full max-w-3xl">
+            <TokenSearchForm />
+          </div>
+        </div>
         
         {!hasToken ? (
           // No token address provided - show empty state
@@ -73,7 +75,7 @@ export default async function TokenAnalysisPage({ params, searchParams }: PagePr
       <footer className="bg-slate-900 py-8 w-full mt-auto">
         <div className="container mx-auto px-4">
           <div className="text-center text-slate-400">
-            <p>© {new Date().getFullYear()} SolanaLens. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} SolanaLens. All rights reserved.</p>
           </div>
         </div>
       </footer>

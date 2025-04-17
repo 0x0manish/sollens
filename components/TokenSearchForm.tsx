@@ -1,13 +1,23 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useState, FormEvent, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export function TokenSearchForm() {
   const [isSearching, setIsSearching] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Reset search state on component mount and when URL changes
+  useEffect(() => {
+    const currentTokenAddress = searchParams.get('tokenAddress');
+    if (currentTokenAddress) {
+      setTokenAddress(currentTokenAddress);
+    }
+    setIsSearching(false);
+  }, [searchParams]);
   
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -38,4 +48,4 @@ export function TokenSearchForm() {
       </Button>
     </form>
   );
-} 
+}

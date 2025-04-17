@@ -33,6 +33,7 @@ import {
 import { TokenAnalysisLoading } from "@/components/TokenAnalysisLoading";
 import { DecentralizationAnalysis } from "@/components/DecentralizationAnalysis";
 import { TokenHolders } from "@/components/TokenHolders";
+import { XLogo } from "@/components/icons/XLogo";
 
 interface TokenAnalysisProps {
   tokenAddress: string;
@@ -229,6 +230,15 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
               >
                 {copiedText === 'address' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </button>
+              <a 
+                href={`https://x.com/search?q=${tokenInfo.address}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-slate-500 hover:text-slate-300 transition ml-1"
+                title="Search on X"
+              >
+                <XLogo className="h-4 w-4" />
+              </a>
             </div>
           </div>
           
