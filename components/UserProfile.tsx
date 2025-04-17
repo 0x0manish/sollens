@@ -2,7 +2,7 @@
 
 import { useUser } from "@civic/auth-web3/react";
 import { userHasWallet } from "@civic/auth-web3";
-import { Check, Copy, LogOut, User, Wallet, ArrowUpRight } from "lucide-react";
+import { Check, Copy, LogOut, User, Wallet, ArrowUpRight, ExternalLink } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -229,15 +229,26 @@ export function UserProfile() {
                         {minifyAddress(walletAddress)}
                       </span>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-6 w-6 p-0" 
-                      onClick={copyToClipboard}
-                      title="Copy wallet address"
-                    >
-                      <Copy className={`h-3 w-3 ${isCopied ? 'text-emerald-400' : 'text-slate-400'}`} />
-                    </Button>
+                    <div className="flex items-center space-x-1">
+                      <a
+                        href={`https://solscan.io/account/${walletAddress}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="View on Solscan"
+                        className="text-slate-400 hover:text-emerald-400 transition-colors"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 w-6 p-0" 
+                        onClick={copyToClipboard}
+                        title="Copy wallet address"
+                      >
+                        <Copy className={`h-3 w-3 ${isCopied ? 'text-emerald-400' : 'text-slate-400'}`} />
+                      </Button>
+                    </div>
                   </div>
                 )}
                 
