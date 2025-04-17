@@ -6,6 +6,7 @@ import { Check, Copy, LogOut, User, Wallet } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 export function UserProfile() {
   const userContext = useUser();
@@ -14,6 +15,8 @@ export function UserProfile() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   
@@ -53,10 +56,13 @@ export function UserProfile() {
           // Try to access the wallet address using various possible paths based on documentation
           if ((userContext as any).solana?.address) {
             setWalletAddress((userContext as any).solana.address);
+            fetchWalletBalance((userContext as any).solana.address);
           } else if ((userContext as any).solana?.wallet?.publicKey?.toString()) {
             setWalletAddress((userContext as any).solana.wallet.publicKey.toString());
+            fetchWalletBalance((userContext as any).solana.wallet.publicKey);
           } else if ((userContext as any).publicKey?.toString()) {
             setWalletAddress((userContext as any).publicKey.toString());
+            fetchWalletBalance((userContext as any).publicKey);
           } else {
             console.log("Wallet exists but address not found in expected location");
           }
@@ -69,10 +75,13 @@ export function UserProfile() {
             // Check structure again after creation
             if ((userContext as any).solana?.address) {
               setWalletAddress((userContext as any).solana.address);
+              fetchWalletBalance((userContext as any).solana.address);
             } else if ((userContext as any).solana?.wallet?.publicKey?.toString()) {
               setWalletAddress((userContext as any).solana.wallet.publicKey.toString());
+              fetchWalletBalance((userContext as any).solana.wallet.publicKey);
             } else if ((userContext as any).publicKey?.toString()) {
               setWalletAddress((userContext as any).publicKey.toString());
+              fetchWalletBalance((userContext as any).publicKey);
             }
           } catch (error) {
             console.error("Failed to create wallet:", error);
@@ -111,6 +120,48 @@ export function UserProfile() {
   const minifyAddress = (address: string | null): string => {
     if (!address) return "";
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  };
+  
+  // Function to fetch wallet balance
+  const fetchWalletBalance = async (publicKey: any) => {
+    if (!publicKey) return;
+    
+    try {
+      setIsLoadingBalance(true);
+      // Use the environment variable for RPC endpoint
+      const rpcEndpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT;
+      
+      if (!rpcEndpoint) {
+        console.error("No RPC endpoint configured in environment variables");
+        return;
+      }
+      
+      const connection = new Connection(rpcEndpoint);
+      
+      // Convert string address to PublicKey if needed
+      let solanaPublicKey;
+      if (typeof publicKey === 'string') {
+        solanaPublicKey = new PublicKey(publicKey);
+      } else if (publicKey.toBase58) {
+        // It's already a PublicKey object
+        solanaPublicKey = publicKey;
+      } else if (publicKey.toString) {
+        // It might be another object with a toString method
+        solanaPublicKey = new PublicKey(publicKey.toString());
+      } else {
+        console.error("Invalid public key format:", publicKey);
+        throw new Error("Invalid public key format");
+      }
+      
+      const balance = await connection.getBalance(solanaPublicKey);
+      setWalletBalance(balance / LAMPORTS_PER_SOL); // Convert lamports to SOL
+      
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+      setWalletBalance(null);
+    } finally {
+      setIsLoadingBalance(false);
+    }
   };
   
   return (
@@ -185,6 +236,26 @@ export function UserProfile() {
                     >
                       <Copy className={`h-3 w-3 ${isCopied ? 'text-emerald-400' : 'text-slate-400'}`} />
                     </Button>
+                  </div>
+                )}
+                
+                {walletAddress && (
+                  <div className="bg-slate-700/50 p-2 rounded mt-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Wallet className="h-3 w-3 text-emerald-500 mr-2" />
+                        <span className="text-xs text-slate-400">SOL Balance:</span>
+                      </div>
+                      <span className="text-xs font-mono font-medium text-emerald-400">
+                        {isLoadingBalance ? (
+                          <span className="text-slate-300">Loading...</span>
+                        ) : walletBalance !== null ? (
+                          `${walletBalance.toFixed(4)} SOL`
+                        ) : (
+                          <span className="text-slate-300">Error loading balance</span>
+                        )}
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>

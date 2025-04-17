@@ -6,6 +6,22 @@ export const metadata: Metadata = {
   title: 'Sollens - Verify Solana Tokens',
   description: 'Comprehensive analysis and verification for Solana tokens',
   generator: 'v0.dev',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.svg',
+        type: 'image/svg+xml',
+      },
+      {
+        url: '/favicon.ico',
+        sizes: 'any',
+      },
+    ],
+    apple: {
+      url: '/favicon.svg',
+      type: 'image/svg+xml',
+    },
+  },
 }
 
 export default function RootLayout({
