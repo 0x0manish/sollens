@@ -2,11 +2,12 @@
 
 import { useUser } from "@civic/auth-web3/react";
 import { userHasWallet } from "@civic/auth-web3";
-import { Check, Copy, LogOut, User, Wallet } from "lucide-react";
+import { Check, Copy, LogOut, User, Wallet, ArrowUpRight } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { WithdrawDialog } from "./WithdrawDialog";
 
 export function UserProfile() {
   const userContext = useUser();
@@ -17,6 +18,7 @@ export function UserProfile() {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+  const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   
@@ -256,6 +258,21 @@ export function UserProfile() {
                         )}
                       </span>
                     </div>
+                    
+                    {walletBalance !== null && walletBalance > 0.001 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-2 bg-transparent border-slate-600 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300"
+                        onClick={() => {
+                          setIsDropdownOpen(false); 
+                          setTimeout(() => setShowWithdrawDialog(true), 300);
+                        }}
+                      >
+                        <ArrowUpRight className="h-3 w-3 mr-1" />
+                        Withdraw Balance
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
@@ -274,6 +291,17 @@ export function UserProfile() {
           </div>
         )}
       </div>
+      
+      {/* Withdraw Dialog */}
+      {userHasWallet(userContext) && (userContext as any).solana?.wallet && (
+        <WithdrawDialog
+          open={showWithdrawDialog}
+          onOpenChange={setShowWithdrawDialog}
+          walletBalance={walletBalance}
+          walletPublicKey={walletAddress}
+          solanaWallet={(userContext as any).solana.wallet}
+        />
+      )}
     </div>
   );
 } 
