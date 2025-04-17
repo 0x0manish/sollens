@@ -11,7 +11,7 @@ export default function LandingPage() {
           <div className="bg-emerald-500 p-2 rounded-lg">
             <Search className="h-5 w-5 text-slate-900" />
           </div>
-          <h1 className="text-xl font-bold">SolanaLens</h1>
+          <h1 className="text-xl font-bold">Sollens</h1>
         </div>
         <Button className="bg-emerald-500 hover:bg-emerald-600 text-white" asChild>
           <Link href="/login">Launch App</Link>
@@ -25,7 +25,7 @@ export default function LandingPage() {
             Verify Any <span className="text-emerald-400">Solana Token</span> With Confidence
           </h1>
           <p className="text-lg text-slate-300 mb-8">
-            SolanaLens provides comprehensive analysis and verification for Solana tokens. Check authenticity, review
+            Sollens provides comprehensive analysis and verification for Solana tokens. Check authenticity, review
             metrics, and make informed decisions in seconds.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
@@ -92,7 +92,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Comprehensive Token Analysis</h2>
             <p className="text-slate-300 max-w-2xl mx-auto">
-              SolanaLens provides in-depth analysis of any Solana token, helping you make informed decisions.
+              Sollens provides in-depth analysis of any Solana token, helping you make informed decisions.
             </p>
           </div>
 
@@ -148,7 +148,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How SolanaLens Works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How Sollens Works</h2>
             <p className="text-slate-300 max-w-2xl mx-auto">
               Our advanced analysis engine provides real-time insights in just a few seconds.
             </p>
@@ -204,20 +204,20 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
-            <p className="text-slate-300 max-w-2xl mx-auto">Everything you need to know about SolanaLens.</p>
+            <p className="text-slate-300 max-w-2xl mx-auto">Everything you need to know about Sollens.</p>
           </div>
 
           <div className="max-w-3xl mx-auto space-y-6">
             {[
               {
-                question: "How does SolanaLens verify token authenticity?",
+                question: "How does Sollens verify token authenticity?",
                 answer:
-                  "SolanaLens uses a combination of on-chain data analysis, contract code review, and market metrics to verify token authenticity. We check for common scam patterns, analyze liquidity depth, and verify team information.",
+                  "Sollens uses a combination of on-chain data analysis, contract code review, and market metrics to verify token authenticity. We check for common scam patterns, analyze liquidity depth, and verify team information.",
               },
               {
-                question: "Is SolanaLens free to use?",
+                question: "Is Sollens free to use?",
                 answer:
-                  "SolanaLens offers both free and premium tiers. Basic token analysis is available for free, while advanced features like real-time alerts and detailed reports require a premium subscription.",
+                  "Sollens offers both free and premium tiers. Basic token analysis is available for free, while advanced features like real-time alerts and detailed reports require a premium subscription.",
               },
               {
                 question: "How accurate is the security score?",
@@ -227,7 +227,7 @@ export default function LandingPage() {
               {
                 question: "Can I analyze tokens on other blockchains?",
                 answer:
-                  "Currently, SolanaLens focuses exclusively on Solana tokens to provide the most accurate and in-depth analysis. Support for additional blockchains is on our roadmap.",
+                  "Currently, Sollens focuses exclusively on Solana tokens to provide the most accurate and in-depth analysis. Support for additional blockchains is on our roadmap.",
               },
             ].map((faq, index) => (
               <div key={index} className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
@@ -264,7 +264,7 @@ export default function LandingPage() {
               <div className="bg-emerald-500 p-2 rounded-lg">
                 <Search className="h-5 w-5 text-slate-900" />
               </div>
-              <h1 className="text-xl font-bold">SolanaLens</h1>
+              <h1 className="text-xl font-bold">Sollens</h1>
             </div>
             <div className="flex flex-wrap justify-center gap-8 mb-6 md:mb-0">
               <Link href="#features" className="hover:text-emerald-400 transition-colors">
@@ -279,7 +279,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-slate-800 mt-8 pt-8 text-center text-slate-400">
-            <p>© {new Date().getFullYear()} SolanaLens. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Sollens. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -10,7 +10,7 @@ export function LoadingScreen() {
           <div className="bg-emerald-500 p-3 rounded-lg">
             <Search className="h-6 w-6 text-slate-900" />
           </div>
-          <h1 className="text-2xl font-bold">SolanaLens</h1>
+          <h1 className="text-2xl font-bold">Sollens</h1>
         </div>
         
         <div className="relative w-24 h-24 mb-6">

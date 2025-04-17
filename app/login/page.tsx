@@ -22,7 +22,7 @@ export default async function LoginPage() {
           <div className="bg-emerald-500 p-2 rounded-lg">
             <Search className="h-5 w-5 text-slate-900" />
           </div>
-          <h1 className="text-xl font-bold">SolanaLens</h1>
+          <h1 className="text-xl font-bold">Sollens</h1>
         </Link>
       </header>
 
@@ -36,7 +36,7 @@ export default async function LoginPage() {
                 <div className="mx-auto w-20 h-20 bg-slate-700 rounded-full flex items-center justify-center mb-4">
                   <CircleUser className="h-12 w-12 text-emerald-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Sign in to SolanaLens</h2>
+                <h2 className="text-2xl font-bold mb-2">Sign in to Sollens</h2>
                 <p className="text-slate-300">
                   Your secure gateway to comprehensive Solana token analysis
                 </p>
@@ -65,7 +65,7 @@ export default async function LoginPage() {
       <footer className="bg-slate-900 py-8 w-full mt-auto">
         <div className="container mx-auto px-4">
           <div className="text-center text-slate-400">
-            <p>© {new Date().getFullYear()} SolanaLens. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Sollens. All rights reserved.</p>
           </div>
         </div>
       </footer>

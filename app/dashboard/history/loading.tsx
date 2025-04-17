@@ -11,7 +11,7 @@ export default function Loading() {
           <div className="bg-emerald-500 p-2 rounded-lg">
             <Search className="h-5 w-5 text-slate-900" />
           </div>
-          <h1 className="text-xl font-bold">SolanaLens</h1>
+          <h1 className="text-xl font-bold">Sollens</h1>
         </Link>
         
         <div className="flex items-center gap-4">

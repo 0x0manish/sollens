@@ -3,7 +3,7 @@ import './globals.css'
 import { CivicAuthProvider } from "@civic/auth-web3/nextjs"
 
 export const metadata: Metadata = {
-  title: 'SolanaLens - Verify Solana Tokens',
+  title: 'Sollens - Verify Solana Tokens',
   description: 'Comprehensive analysis and verification for Solana tokens',
   generator: 'v0.dev',
 }

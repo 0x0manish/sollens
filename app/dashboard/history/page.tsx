@@ -21,7 +21,7 @@ export default async function TokenHistoryPage() {
           <div className="bg-emerald-500 p-2 rounded-lg">
             <Search className="h-5 w-5 text-slate-900" />
           </div>
-          <h1 className="text-xl font-bold">SolanaLens</h1>
+          <h1 className="text-xl font-bold">Sollens</h1>
         </Link>
         
         <UserProfile />
@@ -49,7 +49,7 @@ export default async function TokenHistoryPage() {
       <footer className="bg-slate-900 py-8 w-full mt-auto">
         <div className="container mx-auto px-4">
           <div className="text-center text-slate-400">
-            <p>© {new Date().getFullYear()} SolanaLens. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Sollens. All rights reserved.</p>
           </div>
         </div>
       </footer>

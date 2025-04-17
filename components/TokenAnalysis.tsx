@@ -46,6 +46,7 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<TokenAnalysisData | null>(null);
   const [rugCheckData, setRugCheckData] = useState<any>(null);
+  const [dexScreenerData, setDexScreenerData] = useState<any>(null);
   const [expandedExchange, setExpandedExchange] = useState<string | null>(null);
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
@@ -82,6 +83,18 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
         } catch (rugCheckError) {
           console.error('Error fetching RugCheck data:', rugCheckError);
           // Don't set main error - allow analysis to continue even if RugCheck fails
+        }
+        
+        // Fetch DexScreener data
+        try {
+          const dexScreenerResponse = await fetch(`/api/token/dexscreener?address=${tokenAddress}`);
+          if (dexScreenerResponse.ok) {
+            const dexScreenerData = await dexScreenerResponse.json();
+            setDexScreenerData(dexScreenerData);
+          }
+        } catch (dexScreenerError) {
+          console.error('Error fetching DexScreener data:', dexScreenerError);
+          // Don't set main error - allow analysis to continue even if DexScreener fails
         }
       } catch (err) {
         console.error('Error fetching token data:', err);
@@ -277,7 +290,11 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
       </div>
       
       {/* RugCheck Token Overview */}
-      <TokenOverview data={rugCheckData} loading={loading} />
+      <TokenOverview 
+        data={rugCheckData} 
+        dexScreenerData={dexScreenerData}
+        loading={loading} 
+      />
       
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -2,6 +2,7 @@
 
 import { Lock, Info, Coins, Users, Crown, Key, AlertTriangle, ExternalLink } from "lucide-react";
 import { formatNumber, shortenAddress } from "@/lib/utils";
+import { DexPaidBadge } from "@/components/DexPaidBadge";
 
 interface RugCheckData {
   mint: string;
@@ -20,12 +21,19 @@ interface RugCheckData {
   markets: any[];
 }
 
+interface DexScreenerData {
+  isPaid: boolean;
+  message: string;
+  details?: any;
+}
+
 interface TokenOverviewProps {
   data: RugCheckData | null;
+  dexScreenerData: DexScreenerData | null;
   loading: boolean;
 }
 
-export function TokenOverview({ data, loading }: TokenOverviewProps) {
+export function TokenOverview({ data, dexScreenerData, loading }: TokenOverviewProps) {
   if (loading) {
     return <TokenOverviewSkeleton />;
   }
@@ -56,9 +64,18 @@ export function TokenOverview({ data, loading }: TokenOverviewProps) {
 
   return (
     <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-      <div className="flex items-center space-x-2 mb-4">
-        <Info className="h-5 w-5 text-emerald-500" />
-        <h2 className="text-xl font-semibold">Token Overview</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-2">
+          <Info className="h-5 w-5 text-emerald-500" />
+          <h2 className="text-xl font-semibold">Token Overview</h2>
+        </div>
+        
+        {dexScreenerData && (
+          <DexPaidBadge 
+            isPaid={dexScreenerData.isPaid} 
+            message={dexScreenerData.message}
+          />
+        )}
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
