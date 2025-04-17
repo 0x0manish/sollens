@@ -2,7 +2,7 @@
 
 import { useUser } from "@civic/auth-web3/react";
 import { userHasWallet } from "@civic/auth-web3";
-import { Check, Copy, LogOut, User, Wallet, ArrowUpRight, ExternalLink } from "lucide-react";
+import { Check, Copy, LogOut, User, Wallet, ArrowUpRight, ExternalLink, CreditCard } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -101,10 +101,16 @@ export function UserProfile() {
   
   const handleSignOut = async () => {
     try {
+      // Close dropdown immediately for better responsiveness
+      setIsDropdownOpen(false);
+      
+      // Start navigation to home page right away
+      router.push('/');
+      
+      // Then perform sign out in the background
       if ((userContext as any).signOut) {
         await (userContext as any).signOut();
       }
-      router.push('/login');
     } catch (error) {
       console.error("Failed to sign out:", error);
     }
@@ -168,6 +174,16 @@ export function UserProfile() {
   
   return (
     <div className="flex items-center gap-4 relative" ref={dropdownRef}>
+      {/* Buy Credit Button */}
+      <Button
+        variant="default"
+        size="sm"
+        className="bg-emerald-500 text-white hover:bg-transparent hover:text-emerald-500 hover:border-emerald-500 border border-emerald-500 transition-colors"
+      >
+        <CreditCard className="h-4 w-4 mr-2" />
+        Buy Credit
+      </Button>
+      
       <div className="relative">
         <Button 
           variant="ghost" 
