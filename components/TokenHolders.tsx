@@ -34,29 +34,73 @@ export function TokenHolders({ tokenAddress }: TokenHoldersProps) {
       setIsLoading(true);
       setError(null);
       
+      // First try bubblemaps API
+      let bubblemapsSuccessful = false;
+      
       try {
         const response = await fetch(`https://api-legacy.bubblemaps.io/map-data?token=${tokenAddress}&chain=sol`);
         
-        if (!response.ok) {
-          throw new Error(`Error fetching holder data: ${response.status}`);
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Sort by percentage (highest first) and take top 10
+          const sortedHolders = [...data.nodes].sort((a, b) => b.percentage - a.percentage).slice(0, 10);
+          
+          setHolders(sortedHolders);
+          setTokenInfo({
+            symbol: data.symbol,
+            full_name: data.full_name
+          });
+          bubblemapsSuccessful = true;
+        } else {
+          console.log(`Bubblemaps API error: ${response.status}, will try fallback...`);
         }
-        
-        const data = await response.json();
-        
-        // Sort by percentage (highest first) and take top 10
-        const sortedHolders = [...data.nodes].sort((a, b) => b.percentage - a.percentage).slice(0, 10);
-        
-        setHolders(sortedHolders);
-        setTokenInfo({
-          symbol: data.symbol,
-          full_name: data.full_name
-        });
-      } catch (err) {
-        console.error("Error fetching token holders:", err);
-        setError("Failed to load token holder data. Please try again later.");
-      } finally {
-        setIsLoading(false);
+      } catch (bubbleMapsErr) {
+        console.error("Error with bubblemaps API:", bubbleMapsErr);
+        // Continue to fallback
       }
+      
+      // If bubblemaps failed, try rugcheck API as fallback
+      if (!bubblemapsSuccessful) {
+        try {
+          // Fallback to rugcheck API
+          const rugcheckResponse = await fetch(`https://api.rugcheck.xyz/v1/tokens/${tokenAddress}/report`);
+          
+          if (!rugcheckResponse.ok) {
+            throw new Error(`Error fetching holder data from fallback API: ${rugcheckResponse.status}`);
+          }
+          
+          const rugcheckData = await rugcheckResponse.json();
+          
+          if (rugcheckData.topHolders && rugcheckData.topHolders.length > 0) {
+            // Map rugcheck data format to our TokenHolder format
+            const mappedHolders: TokenHolder[] = rugcheckData.topHolders
+              .slice(0, 10) // Limit to top 10 holders
+              .map((holder: any) => ({
+                address: holder.address,
+                amount: holder.uiAmount,
+                percentage: holder.pct,
+                is_contract: false, // RugCheck doesn't provide this info
+                transaction_count: 0, // RugCheck doesn't provide this info
+                name: holder.owner === holder.address ? undefined : holder.owner,
+                is_exchange: rugcheckData.knownAccounts[holder.owner]?.type === "AMM" || false
+              }));
+            
+            setHolders(mappedHolders);
+            setTokenInfo({
+              symbol: rugcheckData.tokenMeta?.symbol || "",
+              full_name: rugcheckData.tokenMeta?.name || ""
+            });
+          } else {
+            throw new Error("No holder data available from fallback API");
+          }
+        } catch (fallbackErr: any) {
+          console.error("Error fetching token holders from fallback API:", fallbackErr);
+          setError(`Failed to load token holder data: ${fallbackErr.message}`);
+        }
+      }
+      
+      setIsLoading(false);
     }
     
     fetchHolders();

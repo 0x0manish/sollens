@@ -13,6 +13,7 @@ export function UserProfile() {
   const [isCreatingWallet, setIsCreatingWallet] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   
@@ -38,6 +39,15 @@ export function UserProfile() {
 
         // Debug user context in console
         console.log("User context:", userContext);
+        
+        // Check for profile picture in user data
+        if (userContext.user?.image) {
+          setProfilePicture(userContext.user.image as string);
+        } else if ((userContext.user as any)?.picture) {
+          setProfilePicture((userContext.user as any).picture as string);
+        } else if ((userContext.user as any)?.photos?.[0]?.value) {
+          setProfilePicture((userContext.user as any).photos[0].value as string);
+        }
         
         if (userHasWallet(userContext)) {
           // Try to access the wallet address using various possible paths based on documentation
@@ -112,7 +122,11 @@ export function UserProfile() {
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <div className="h-10 w-10 rounded-full flex items-center justify-center overflow-hidden">
-            <User className="h-5 w-5 text-slate-300" />
+            {profilePicture ? (
+              <img src={profilePicture} alt="Profile Picture" className="h-10 w-10 rounded-full object-cover" />
+            ) : (
+              <User className="h-5 w-5 text-slate-300" />
+            )}
           </div>
         </Button>
         
@@ -121,7 +135,11 @@ export function UserProfile() {
             <div className="p-4">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="h-12 w-12 rounded-full bg-slate-700 flex items-center justify-center">
-                  <User className="h-6 w-6 text-slate-300" />
+                  {profilePicture ? (
+                    <img src={profilePicture} alt="Profile Picture" className="h-12 w-12 rounded-full object-cover" />
+                  ) : (
+                    <User className="h-6 w-6 text-slate-300" />
+                  )}
                 </div>
                 <div>
                   <p className="font-medium">{userContext.user?.name || "Solana User"}</p>
