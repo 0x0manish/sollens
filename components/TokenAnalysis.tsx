@@ -34,6 +34,7 @@ import { TokenAnalysisLoading } from "@/components/TokenAnalysisLoading";
 import { DecentralizationAnalysis } from "@/components/DecentralizationAnalysis";
 import { TokenHolders } from "@/components/TokenHolders";
 import { XLogo } from "@/components/icons/XLogo";
+import { TokenOverview } from "@/components/TokenOverview";
 
 interface TokenAnalysisProps {
   tokenAddress: string;
@@ -44,6 +45,7 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<TokenAnalysisData | null>(null);
+  const [rugCheckData, setRugCheckData] = useState<any>(null);
   const [expandedExchange, setExpandedExchange] = useState<string | null>(null);
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
@@ -58,6 +60,7 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
           setInitialLoading(false);
         }, 2000);
         
+        // Fetch token analysis data
         const response = await fetch(`/api/token/analysis?address=${tokenAddress}`);
         
         if (!response.ok) {
@@ -66,6 +69,20 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
         
         const data = await response.json();
         setData(data);
+        
+        // Fetch RugCheck data
+        try {
+          const rugCheckResponse = await fetch(`/api/token/rugcheck?address=${tokenAddress}`);
+          if (rugCheckResponse.ok) {
+            const rugCheckData = await rugCheckResponse.json();
+            if (!rugCheckData.error) {
+              setRugCheckData(rugCheckData);
+            }
+          }
+        } catch (rugCheckError) {
+          console.error('Error fetching RugCheck data:', rugCheckError);
+          // Don't set main error - allow analysis to continue even if RugCheck fails
+        }
       } catch (err) {
         console.error('Error fetching token data:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch token data');
@@ -258,6 +275,9 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
           </div>
         </div>
       </div>
+      
+      {/* RugCheck Token Overview */}
+      <TokenOverview data={rugCheckData} loading={loading} />
       
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

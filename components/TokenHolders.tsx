@@ -43,8 +43,8 @@ export function TokenHolders({ tokenAddress }: TokenHoldersProps) {
         
         const data = await response.json();
         
-        // Sort by percentage (highest first) and take top 20
-        const sortedHolders = [...data.nodes].sort((a, b) => b.percentage - a.percentage).slice(0, 20);
+        // Sort by percentage (highest first) and take top 10
+        const sortedHolders = [...data.nodes].sort((a, b) => b.percentage - a.percentage).slice(0, 10);
         
         setHolders(sortedHolders);
         setTokenInfo({
@@ -92,7 +92,7 @@ export function TokenHolders({ tokenAddress }: TokenHoldersProps) {
     <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
       <h3 className="text-xl font-semibold mb-6 flex items-center">
         <Wallet className="h-5 w-5 mr-2 text-emerald-500" />
-        Top 20 Token Holders {tokenInfo?.symbol && `(${tokenInfo.symbol})`}
+        Top 10 Token Holders {tokenInfo?.symbol && `(${tokenInfo.symbol})`}
       </h3>
       
       <div className="overflow-x-auto">
