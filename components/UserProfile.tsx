@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { WithdrawDialog } from "./WithdrawDialog";
+import { BuyCreditsDialog } from "./BuyCreditsDialog";
 
 export function UserProfile() {
   const userContext = useUser();
@@ -19,9 +20,10 @@ export function UserProfile() {
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
+  const [showBuyCreditsDialog, setShowBuyCreditsDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -29,13 +31,13 @@ export function UserProfile() {
         setIsDropdownOpen(false);
       }
     }
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  
+
   // Initialize and check for wallet when component mounts
   useEffect(() => {
     async function initializeWallet() {
@@ -44,7 +46,7 @@ export function UserProfile() {
 
         // Debug user context in console
         console.log("User context:", userContext);
-        
+
         // Check for profile picture in user data
         if (userContext.user?.image) {
           setProfilePicture(userContext.user.image as string);
@@ -53,7 +55,7 @@ export function UserProfile() {
         } else if ((userContext.user as any)?.photos?.[0]?.value) {
           setProfilePicture((userContext.user as any).photos[0].value as string);
         }
-        
+
         if (userHasWallet(userContext)) {
           // Try to access the wallet address using various possible paths based on documentation
           if ((userContext as any).solana?.address) {
@@ -73,7 +75,7 @@ export function UserProfile() {
             setIsCreatingWallet(true);
             await userContext.createWallet();
             console.log("Wallet created, context:", userContext);
-            
+
             // Check structure again after creation
             if ((userContext as any).solana?.address) {
               setWalletAddress((userContext as any).solana.address);
@@ -95,18 +97,18 @@ export function UserProfile() {
         console.error("Error in wallet initialization:", error);
       }
     }
-    
+
     initializeWallet();
   }, [userContext]);
-  
+
   const handleSignOut = async () => {
     try {
       // Close dropdown immediately for better responsiveness
       setIsDropdownOpen(false);
-      
+
       // Start navigation to home page right away
       router.push('/');
-      
+
       // Then perform sign out in the background
       if ((userContext as any).signOut) {
         await (userContext as any).signOut();
@@ -115,7 +117,7 @@ export function UserProfile() {
       console.error("Failed to sign out:", error);
     }
   };
-  
+
   const copyToClipboard = () => {
     if (walletAddress) {
       navigator.clipboard.writeText(walletAddress);
@@ -123,29 +125,29 @@ export function UserProfile() {
       setTimeout(() => setIsCopied(false), 2000);
     }
   };
-  
+
   // Function to minify the wallet address
   const minifyAddress = (address: string | null): string => {
     if (!address) return "";
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
   };
-  
+
   // Function to fetch wallet balance
   const fetchWalletBalance = async (publicKey: any) => {
     if (!publicKey) return;
-    
+
     try {
       setIsLoadingBalance(true);
       // Use the environment variable for RPC endpoint
       const rpcEndpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT;
-      
+
       if (!rpcEndpoint) {
         console.error("No RPC endpoint configured in environment variables");
         return;
       }
-      
+
       const connection = new Connection(rpcEndpoint);
-      
+
       // Convert string address to PublicKey if needed
       let solanaPublicKey;
       if (typeof publicKey === 'string') {
@@ -160,10 +162,10 @@ export function UserProfile() {
         console.error("Invalid public key format:", publicKey);
         throw new Error("Invalid public key format");
       }
-      
+
       const balance = await connection.getBalance(solanaPublicKey);
       setWalletBalance(balance / LAMPORTS_PER_SOL); // Convert lamports to SOL
-      
+
     } catch (error) {
       console.error("Error fetching wallet balance:", error);
       setWalletBalance(null);
@@ -171,22 +173,31 @@ export function UserProfile() {
       setIsLoadingBalance(false);
     }
   };
-  
+
   return (
-    <div className="flex items-center gap-4 relative" ref={dropdownRef}>
-      {/* Buy Credit Button */}
+    <div className="flex items-center gap-4 relative">
+      {/* Buy Credits Button */}
       <Button
         variant="default"
         size="sm"
         className="bg-emerald-500 text-white hover:bg-transparent hover:text-emerald-500 hover:border-emerald-500 border border-emerald-500 transition-colors"
+        onClick={() => {
+          // Only show the dialog if user has a wallet
+          if (userHasWallet(userContext) && walletAddress) {
+            setShowBuyCreditsDialog(true);
+          } else {
+            // We could show a toast notification here about needing a wallet first
+            console.log("User needs a wallet to buy credits");
+          }
+        }}
       >
         <CreditCard className="h-4 w-4 mr-2" />
-        Buy Credit
+        Buy Credits
       </Button>
-      
-      <div className="relative">
-        <Button 
-          variant="ghost" 
+
+      <div className="relative" ref={dropdownRef}>
+        <Button
+          variant="ghost"
           className="rounded-full h-10 w-10 p-0 bg-slate-700 hover:bg-slate-600"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
@@ -198,7 +209,7 @@ export function UserProfile() {
             )}
           </div>
         </Button>
-        
+
         {isDropdownOpen && (
           <div className="absolute top-full right-0 mt-2 w-64 rounded-lg bg-slate-800 border border-slate-700 shadow-lg z-50">
             <div className="p-4">
@@ -215,7 +226,7 @@ export function UserProfile() {
                   <p className="text-xs text-slate-400">Authenticated with Civic</p>
                 </div>
               </div>
-              
+
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-400">Authentication</span>
@@ -223,7 +234,7 @@ export function UserProfile() {
                     <Check className="h-3 w-3 mr-1" /> Verified
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-400">Wallet</span>
                   {isCreatingWallet ? (
@@ -236,7 +247,7 @@ export function UserProfile() {
                     <span className="text-slate-300 text-xs">Not connected</span>
                   )}
                 </div>
-                
+
                 {walletAddress && (
                   <div className="bg-slate-700/50 p-2 rounded flex items-center justify-between">
                     <div className="flex items-center">
@@ -255,10 +266,10 @@ export function UserProfile() {
                       >
                         <ExternalLink className="h-3 w-3" />
                       </a>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-6 w-6 p-0" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
                         onClick={copyToClipboard}
                         title="Copy wallet address"
                       >
@@ -267,7 +278,7 @@ export function UserProfile() {
                     </div>
                   </div>
                 )}
-                
+
                 {walletAddress && (
                   <div className="bg-slate-700/50 p-2 rounded mt-2">
                     <div className="flex items-center justify-between">
@@ -285,14 +296,14 @@ export function UserProfile() {
                         )}
                       </span>
                     </div>
-                    
+
                     {walletBalance !== null && walletBalance > 0.001 && (
                       <Button
                         variant="outline"
                         size="sm"
                         className="w-full mt-2 bg-transparent border-slate-600 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300"
                         onClick={() => {
-                          setIsDropdownOpen(false); 
+                          setIsDropdownOpen(false);
                           setTimeout(() => setShowWithdrawDialog(true), 300);
                         }}
                       >
@@ -303,10 +314,10 @@ export function UserProfile() {
                   </div>
                 )}
               </div>
-              
+
               <div className="pt-3 border-t border-slate-700">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full justify-start text-slate-300 hover:bg-slate-700 hover:text-white"
                   onClick={handleSignOut}
                 >
@@ -318,7 +329,7 @@ export function UserProfile() {
           </div>
         )}
       </div>
-      
+
       {/* Withdraw Dialog */}
       {userHasWallet(userContext) && (userContext as any).solana?.wallet && (
         <WithdrawDialog
@@ -329,6 +340,17 @@ export function UserProfile() {
           solanaWallet={(userContext as any).solana.wallet}
         />
       )}
+
+      {/* Buy Credits Dialog */}
+      {userHasWallet(userContext) && (userContext as any).solana?.wallet && (
+        <BuyCreditsDialog
+          open={showBuyCreditsDialog}
+          onOpenChange={setShowBuyCreditsDialog}
+          walletBalance={walletBalance}
+          walletPublicKey={walletAddress}
+          solanaWallet={(userContext as any).solana.wallet}
+        />
+      )}
     </div>
   );
-} 
+}
