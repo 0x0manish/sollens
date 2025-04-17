@@ -19,7 +19,6 @@ export function DecentralizationAnalysis({ data, loading }: DecentralizationAnal
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
         <div className="flex items-center space-x-2 mb-2">
           <Network className="h-5 w-5 text-emerald-500" />
-          <h2 className="text-xl font-semibold">Decentralization Analysis</h2>
         </div>
         <p className="text-slate-400 text-sm mb-4">
           Decentralization data is currently unavailable for this token.
@@ -47,11 +46,6 @@ export function DecentralizationAnalysis({ data, loading }: DecentralizationAnal
 
   return (
     <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-      <div className="flex items-center space-x-2 mb-4">
-        <Network className="h-5 w-5 text-emerald-500" />
-        <h2 className="text-xl font-semibold">Decentralization Analysis</h2>
-      </div>
-      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Decentralization Score */}
         <div className="bg-slate-700/30 rounded-lg p-4">
@@ -104,7 +98,7 @@ export function DecentralizationAnalysis({ data, loading }: DecentralizationAnal
           </div>
           
           <p className="text-sm text-slate-300">
-            Percentage of total supply held on centralized exchanges
+            Percentage of total supply held on CEX
           </p>
           
           <div className="mt-3">
@@ -153,10 +147,6 @@ export function DecentralizationAnalysis({ data, loading }: DecentralizationAnal
           </div>
         </div>
       </div>
-      
-      <div className="mt-4 text-xs text-slate-400 text-right">
-        Powered by Bubblemaps
-      </div>
     </div>
   );
 }
@@ -164,11 +154,6 @@ export function DecentralizationAnalysis({ data, loading }: DecentralizationAnal
 function DecentralizationSkeleton() {
   return (
     <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-      <div className="flex items-center space-x-2 mb-4">
-        <Network className="h-5 w-5 text-emerald-500" />
-        <h2 className="text-xl font-semibold">Decentralization Analysis</h2>
-      </div>
-      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[...Array(3)].map((_, index) => (
           <div key={index} className="bg-slate-700/30 rounded-lg p-4">

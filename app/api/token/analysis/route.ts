@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withApiMiddleware } from '../middleware';
 
 const CHECKDEX_API_URL = 'https://www.checkdex.xyz/api/getPairs';
+const BUBBLEMAP_API_URL = 'https://api-legacy.bubblemaps.io/map-metadata';
 
 async function handler(request: NextRequest) {
   try {
@@ -12,20 +13,14 @@ async function handler(request: NextRequest) {
       return NextResponse.json({ error: 'Token address is required' }, { status: 400 });
     }
 
-    // Fetch data from CheckDex API, decentralization API, and DEX verification API in parallel
-    const [checkdexResponse, decentralizationResponse, dexVerificationResponse] = await Promise.all([
+    // Fetch data from CheckDex API and Bubblemap API directly
+    const [checkdexResponse, bubbleMapResponse] = await Promise.all([
       fetch(`${CHECKDEX_API_URL}?address=${address}`),
-      fetch(`${request.nextUrl.origin}/api/token/decentralization?address=${address}`, { 
-        headers: { 'x-api-route-bypass': 'true' } 
-      }).catch(error => {
+      fetch(`${BUBBLEMAP_API_URL}?chain=sol&token=${address}`).catch(error => {
         console.error('Error fetching decentralization data:', error);
-        return new Response(JSON.stringify({ error: 'Failed to fetch decentralization data' }));
-      }),
-      fetch(`${request.nextUrl.origin}/api/token/dex-verification?address=${address}`, { 
-        headers: { 'x-api-route-bypass': 'true' } 
-      }).catch(error => {
-        console.error('Error fetching DEX verification data:', error);
-        return new Response(JSON.stringify({ paid: false, error: 'Failed to fetch DEX verification data' }));
+        return new Response(JSON.stringify({ error: 'Failed to fetch decentralization data' }), {
+          headers: { 'Content-Type': 'application/json' }
+        });
       })
     ]);
     
@@ -40,54 +35,35 @@ async function handler(request: NextRequest) {
     
     // Parse decentralization data if available
     let decentralizationData = null;
-    if (decentralizationResponse.ok) {
+    if (bubbleMapResponse.ok) {
       try {
-        const decData = await decentralizationResponse.json();
-        
-        // Check if we received an error response from our decentralization API
-        if (decData.error) {
-          console.error('Decentralization API returned an error:', decData.error);
-          decentralizationData = { error: decData.error };
-        } 
-        // Check if we received a valid response with the expected fields
-        else if (decData.status === 'OK' && decData.decentralisation_score !== undefined) {
-          decentralizationData = decData;
-        } 
-        // Otherwise, it's an unexpected format
-        else {
-          console.error('Unexpected decentralization data format:', decData);
-          decentralizationData = { 
-            error: 'Unexpected data format from decentralization API', 
-            receivedData: decData 
-          };
+        const contentType = bubbleMapResponse.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const decData = await bubbleMapResponse.json();
+          
+          // Check if the response has the expected format
+          if (decData.status === "OK" && decData.decentralisation_score !== undefined) {
+            decentralizationData = decData;
+          } else {
+            console.error('Unexpected decentralization data format:', decData);
+            decentralizationData = { 
+              error: 'Unexpected data format from decentralization API', 
+              receivedData: decData 
+            };
+          }
+        } else {
+          console.error(`Non-JSON response from Bubblemap API: ${contentType}`);
+          decentralizationData = { error: 'Non-JSON response from decentralization API' };
         }
       } catch (parseError) {
         console.error('Error parsing decentralization response:', parseError);
         decentralizationData = { error: 'Failed to parse decentralization data' };
       }
     } else {
-      console.error(`Decentralization API response not OK: ${decentralizationResponse.status} ${decentralizationResponse.statusText}`);
+      console.error(`Bubblemap API response not OK: ${bubbleMapResponse.status} ${bubbleMapResponse.statusText}`);
       decentralizationData = { 
-        error: `Decentralization API returned status ${decentralizationResponse.status}` 
+        error: `Decentralization API returned status ${bubbleMapResponse.status}` 
       };
-    }
-    
-    // Parse DEX verification data if available
-    let dexVerificationData = { paid: false };
-    if (dexVerificationResponse.ok) {
-      try {
-        dexVerificationData = await dexVerificationResponse.json();
-        // Ensure it has the expected format
-        if (typeof dexVerificationData !== 'object' || dexVerificationData === null) {
-          console.error('Invalid DEX verification data format');
-          dexVerificationData = { paid: false };
-        }
-      } catch (error) {
-        console.error('Error parsing DEX verification response:', error);
-        dexVerificationData = { paid: false };
-      }
-    } else {
-      console.error(`DEX verification API error: ${dexVerificationResponse.status} ${dexVerificationResponse.statusText}`);
     }
     
     // Extract token info from the first available pair
@@ -99,11 +75,11 @@ async function handler(request: NextRequest) {
     const analytics = calculateAnalytics(checkdexData.pairs || []);
     
     return NextResponse.json({
+      address,
       tokenInfo,
       pairs: checkdexData.pairs || [],
       analytics,
       decentralization: decentralizationData,
-      dexVerification: dexVerificationData,
       pageSize: checkdexData.pageSize,
       page: checkdexData.page,
       cursor: checkdexData.cursor
@@ -210,4 +186,4 @@ function getUniqueExchanges(pairs: any[]) {
 
 function countActivePairs(pairs: any[]) {
   return pairs.filter(pair => !pair.inactivePair).length;
-} 
+}

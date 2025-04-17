@@ -302,7 +302,7 @@ export function TokenAnalysis({ tokenAddress }: TokenAnalysisProps) {
       
       {/* Decentralization Analysis */}
       <DecentralizationAnalysis 
-        data={decentralization} 
+        data={data?.decentralization} 
         loading={loading}
       />
       

@@ -157,18 +157,6 @@ export function TokenHolders({ tokenAddress }: TokenHoldersProps) {
           </tbody>
         </table>
       </div>
-      
-      <div className="mt-4 text-sm text-slate-400 text-right">
-        <a 
-          href={`https://bubblemaps.io/solana/${tokenAddress}`} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-emerald-400 hover:text-emerald-300 flex items-center justify-end"
-        >
-          View full holder distribution on BubbleMaps
-          <ExternalLink className="h-3.5 w-3.5 ml-1" />
-        </a>
-      </div>
     </div>
   );
 } 
