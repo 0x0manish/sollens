@@ -39,9 +39,12 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens.
 - **@solana/web3.js**: Library for interacting with the Solana blockchain
 
 ### Data Sources
-- **CheckDex API**: For token pair and liquidity data
-- **Bubblemap API**: For token decentralization analysis
-- **DexScreener API**: For additional DEX data and analytics
+- **Helius RPC**: High-performance Solana RPC node provider 
+- **DD by Webacy**: Wallet risk assessment and sanctioned address detection
+- **RugCheck**: Token safety verification and token data provider
+- **Bubblemaps**: Token decentralization and holder distribution analysis
+- **DexScreener**: DEX data, token pairs, and market analytics
+- **Solscan**: Blockchain explorer integration for transaction and account data
 
 ## Getting Started
 

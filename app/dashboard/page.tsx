@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
 import { RecentTokens } from "@/components/RecentTokens"
 import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
+import { SolanaDexMetrics } from "@/components/SolanaDexMetrics"
+import { SolanaMindshare } from "@/components/SolanaMindshare"
 
 export default async function DashboardPage() {
   const user = await getUser()
@@ -50,6 +52,16 @@ export default async function DashboardPage() {
               <RecentTokens />
             </div>
           </div>
+        </div>
+        
+        {/* Solana Mindshare */}
+        <div className="mb-12">
+          <SolanaMindshare />
+        </div>
+        
+        {/* Solana DEX Metrics */}
+        <div className="mb-12">
+          <SolanaDexMetrics />
         </div>
       </main>
 
