@@ -1,6 +1,7 @@
-import { Search, Shield, BarChart3, Users, AlertTriangle, Check, ExternalLink } from "lucide-react"
+import { Search, Shield, BarChart3, Users, AlertTriangle, Check, ExternalLink, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import Script from "next/script"
 
 export default function LandingPage() {
   return (
@@ -22,15 +23,17 @@ export default function LandingPage() {
       <section className="container mx-auto px-4 py-20 flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 mb-10 md:mb-0">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Verify Any <span className="text-emerald-400">Solana Token</span> With Confidence
+            Verify Any Solana <span id="animated-text" className="text-emerald-400">Token</span> With Confidence
           </h1>
           <p className="text-lg text-slate-300 mb-8">
-            Sollens provides comprehensive analysis and verification for Solana tokens. Check authenticity, review
-            metrics, and make informed decisions in seconds.
+            In-depth analysis of Solana tokens and wallets to help you make informed decisions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-6 text-lg" asChild>
               <Link href="/login">Analyze Token</Link>
+            </Button>
+            <Button className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-6 text-lg" asChild>
+              <Link href="/login">Analyze Wallet</Link>
             </Button>
           </div>
         </div>
@@ -46,14 +49,21 @@ export default function LandingPage() {
                   <div className="h-10 bg-slate-700 rounded-lg px-4 flex items-center">
                     <input
                       type="text"
-                      placeholder="Enter token address..."
+                      placeholder="Enter token or wallet address..."
                       className="bg-transparent w-full outline-none text-white"
                       disabled
                     />
                   </div>
                 </div>
               </div>
-              <div className="space-y-4">
+              <div className="flex mb-4">
+                <div className="flex-1">
+                  <div id="analysis-type-indicator" className="font-medium text-sm text-emerald-500 mb-1">
+                    Currently Viewing: <span id="analysis-type">Token Analysis</span>
+                  </div>
+                </div>
+              </div>
+              <div id="token-results" className="space-y-4">
                 <div className="p-4 bg-slate-700/50 rounded-lg flex items-center gap-3">
                   <Shield className="h-5 w-5 text-emerald-500" />
                   <div>
@@ -81,6 +91,34 @@ export default function LandingPage() {
                   <AlertTriangle className="ml-auto h-5 w-5 text-amber-500" />
                 </div>
               </div>
+              <div id="wallet-results" className="space-y-4 hidden">
+                <div className="p-4 bg-slate-700/50 rounded-lg flex items-center gap-3">
+                  <Shield className="h-5 w-5 text-emerald-500" />
+                  <div>
+                    <h3 className="font-medium">Risk Score</h3>
+                    <div className="w-full bg-slate-600 h-2 rounded-full mt-1">
+                      <div className="bg-emerald-500 h-2 rounded-full w-[90%]"></div>
+                    </div>
+                  </div>
+                  <span className="ml-auto font-bold">Low Risk</span>
+                </div>
+                <div className="p-4 bg-slate-700/50 rounded-lg flex items-center gap-3">
+                  <Wallet className="h-5 w-5 text-emerald-500" />
+                  <div>
+                    <h3 className="font-medium">Holdings</h3>
+                    <p className="text-sm text-slate-300">12 Tokens, 3 NFTs</p>
+                  </div>
+                  <Check className="ml-auto h-5 w-5 text-emerald-500" />
+                </div>
+                <div className="p-4 bg-slate-700/50 rounded-lg flex items-center gap-3">
+                  <BarChart3 className="h-5 w-5 text-emerald-500" />
+                  <div>
+                    <h3 className="font-medium">Transaction History</h3>
+                    <p className="text-sm text-slate-300">125 transactions</p>
+                  </div>
+                  <Check className="ml-auto h-5 w-5 text-emerald-500" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -90,9 +128,9 @@ export default function LandingPage() {
       <section id="features" className="bg-slate-800/50 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Comprehensive Token Analysis</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Comprehensive Analysis Platform</h2>
             <p className="text-slate-300 max-w-2xl mx-auto">
-              Sollens provides in-depth analysis of any Solana token, helping you make informed decisions.
+              In-depth analysis of Solana tokens and wallets to help you make informed decisions.
             </p>
           </div>
 
@@ -119,9 +157,9 @@ export default function LandingPage() {
                 description: "Identify common scam patterns and suspicious token behaviors.",
               },
               {
-                icon: <ExternalLink className="h-6 w-6 text-emerald-500" />,
-                title: "On-Chain Activity",
-                description: "Track real-time transactions and trading patterns.",
+                icon: <Wallet className="h-6 w-6 text-emerald-500" />,
+                title: "Wallet Risk Assessment",
+                description: "Analyze wallet history and detect sanctioned or high-risk addresses.",
               },
               {
                 icon: <Check className="h-6 w-6 text-emerald-500" />,
@@ -158,8 +196,8 @@ export default function LandingPage() {
             {[
               {
                 step: "01",
-                title: "Enter Token Address",
-                description: "Paste any Solana token address or search by name.",
+                title: "Enter Address",
+                description: "Paste any Solana token or wallet address or search by name.",
               },
               {
                 step: "02",
@@ -225,9 +263,9 @@ export default function LandingPage() {
                   "Our security score is based on multiple factors including contract code, liquidity metrics, holder distribution, and trading patterns. While highly accurate, we recommend using it as one of several tools in your research process.",
               },
               {
-                question: "Can I analyze tokens on other blockchains?",
+                question: "Can I analyze wallets and tokens on other blockchains?",
                 answer:
-                  "Currently, Sollens focuses exclusively on Solana tokens to provide the most accurate and in-depth analysis. Support for additional blockchains is on our roadmap.",
+                  "Currently, Sollens focuses exclusively on Solana tokens and wallets to provide the most accurate and in-depth analysis. Support for additional blockchains is on our roadmap.",
               },
             ].map((faq, index) => (
               <div key={index} className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
@@ -283,6 +321,59 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Text Animation Script */}
+      <Script id="text-animation">
+        {`
+          document.addEventListener('DOMContentLoaded', () => {
+            const animatedText = document.getElementById('animated-text');
+            const analysisType = document.getElementById('analysis-type');
+            const tokenResults = document.getElementById('token-results');
+            const walletResults = document.getElementById('wallet-results');
+            
+            // Words to cycle through
+            const words = ['Token', 'Wallet'];
+            let currentIndex = 0;
+            
+            // Function to update the text with animation
+            function cycleText() {
+              // Fade out
+              animatedText.style.opacity = '0';
+              analysisType.style.opacity = '0';
+              
+              setTimeout(() => {
+                // Change text
+                currentIndex = (currentIndex + 1) % words.length;
+                animatedText.textContent = words[currentIndex];
+                
+                // Toggle results visibility
+                if (words[currentIndex] === 'Token') {
+                  analysisType.textContent = 'Token Analysis';
+                  tokenResults.classList.remove('hidden');
+                  walletResults.classList.add('hidden');
+                } else {
+                  analysisType.textContent = 'Wallet Analysis';
+                  tokenResults.classList.add('hidden');
+                  walletResults.classList.remove('hidden');
+                }
+                
+                // Fade in
+                animatedText.style.opacity = '1';
+                analysisType.style.opacity = '1';
+              }, 500);
+            }
+            
+            // Add transition effect
+            if (animatedText) {
+              animatedText.style.transition = 'opacity 0.5s ease';
+              analysisType.style.transition = 'opacity 0.5s ease';
+              
+              // Start the animation cycle
+              setInterval(cycleText, 3000);
+            }
+          });
+        `}
+      </Script>
     </div>
-  )
+  );
 }
