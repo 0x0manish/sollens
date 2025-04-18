@@ -327,12 +327,12 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
           
           {/* Webacy DD Logo - Circular */}
           <div className="flex items-center">
-            <span className="text-xs text-slate-400 mr-2">DD by Webacy</span>
+            <span className="text-xs text-slate-400 mr-2">Wallet data from</span>
             <a 
               href="https://dd.xyz" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-6 h-6 rounded-full overflow-hidden border border-slate-700 flex items-center justify-center hover:border-emerald-500 transition-colors"
+              className="w-9 h-9 rounded-full overflow-hidden border border-slate-700 flex items-center justify-center hover:border-emerald-500 transition-colors"
               title="Visit DD by Webacy"
             >
               <img 

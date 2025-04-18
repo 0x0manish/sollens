@@ -1,8 +1,9 @@
 "use client";
 
-import { Lock, Info, Coins, Users, Crown, Key, AlertTriangle, ExternalLink } from "lucide-react";
+import { Lock, Info, Coins, Users, Crown, Key, AlertTriangle, ExternalLink, Copy, Check } from "lucide-react";
 import { formatNumber, shortenAddress } from "@/lib/utils";
 import { DexPaidBadge } from "@/components/DexPaidBadge";
+import { useState } from "react";
 
 interface RugCheckData {
   mint: string;
@@ -34,6 +35,14 @@ interface TokenOverviewProps {
 }
 
 export function TokenOverview({ data, dexScreenerData, loading }: TokenOverviewProps) {
+  const [copiedText, setCopiedText] = useState<string | null>(null);
+  
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedText(label);
+    setTimeout(() => setCopiedText(null), 2000);
+  };
+
   if (loading) {
     return <TokenOverviewSkeleton />;
   }
@@ -107,15 +116,23 @@ export function TokenOverview({ data, dexScreenerData, loading }: TokenOverviewP
             <Crown className="h-4 w-4 mr-1" />
             <span>Creator</span>
           </div>
-          <div className="text-white font-mono text-sm">
+          <div className="text-white font-mono text-sm flex items-center">
+            <span>{shortenAddress(data.creator)}</span>
+            <button 
+              className="text-slate-500 hover:text-emerald-400 transition ml-1"
+              onClick={() => copyToClipboard(data.creator, 'creator')}
+              title="Copy creator address"
+            >
+              {copiedText === 'creator' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            </button>
             <a 
               href={`https://solscan.io/account/${data.creator}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center hover:text-emerald-400 transition-colors"
+              className="text-slate-500 hover:text-emerald-400 transition ml-1"
+              title="View on Solscan"
             >
-              {shortenAddress(data.creator)}
-              <ExternalLink className="h-3 w-3 ml-1" />
+              <ExternalLink className="h-3.5 w-3.5" />
             </a>
           </div>
         </div>

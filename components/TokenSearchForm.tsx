@@ -34,6 +34,7 @@ export function TokenSearchForm() {
         name="tokenAddress"
         value={tokenAddress}
         onChange={(e) => setTokenAddress(e.target.value)}
+        autoComplete="off"
         placeholder="Enter Solana Token address"
         className="bg-slate-700 rounded-lg px-4 py-3 w-full text-white outline-none border border-slate-600 focus:border-emerald-500 transition-colors"
       />

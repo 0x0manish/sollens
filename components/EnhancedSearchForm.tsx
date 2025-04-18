@@ -102,6 +102,7 @@ export function EnhancedSearchForm() {
               setAddress(e.target.value);
               setError(null);
             }}
+            autoComplete="off"
             placeholder="Enter Solana token or wallet address"
             className="bg-slate-700 rounded-lg px-4 py-3 w-full text-white outline-none border border-slate-600 focus:border-emerald-500 transition-colors"
           />

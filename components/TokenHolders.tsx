@@ -66,33 +66,39 @@ export function TokenHolders({ tokenAddress }: TokenHoldersProps) {
           // Fallback to rugcheck API
           const rugcheckResponse = await fetch(`https://api.rugcheck.xyz/v1/tokens/${tokenAddress}/report`);
           
-          if (!rugcheckResponse.ok) {
-            throw new Error(`Error fetching holder data from fallback API: ${rugcheckResponse.status}`);
-          }
-          
-          const rugcheckData = await rugcheckResponse.json();
-          
-          if (rugcheckData.topHolders && rugcheckData.topHolders.length > 0) {
-            // Map rugcheck data format to our TokenHolder format
-            const mappedHolders: TokenHolder[] = rugcheckData.topHolders
-              .slice(0, 10) // Limit to top 10 holders
-              .map((holder: any) => ({
-                address: holder.address,
-                amount: holder.uiAmount,
-                percentage: holder.pct,
-                is_contract: false, // RugCheck doesn't provide this info
-                transaction_count: 0, // RugCheck doesn't provide this info
-                name: holder.owner === holder.address ? undefined : holder.owner,
-                is_exchange: rugcheckData.knownAccounts[holder.owner]?.type === "AMM" || false
-              }));
+          // Instead of throwing an error, we'll check the status and handle it gracefully
+          if (rugcheckResponse.ok) {
+            const rugcheckData = await rugcheckResponse.json();
             
-            setHolders(mappedHolders);
-            setTokenInfo({
-              symbol: rugcheckData.tokenMeta?.symbol || "",
-              full_name: rugcheckData.tokenMeta?.name || ""
-            });
+            if (rugcheckData.topHolders && rugcheckData.topHolders.length > 0) {
+              // Map rugcheck data format to our TokenHolder format
+              const mappedHolders: TokenHolder[] = rugcheckData.topHolders
+                .slice(0, 10) // Limit to top 10 holders
+                .map((holder: any) => ({
+                  address: holder.address,
+                  amount: holder.uiAmount,
+                  percentage: holder.pct,
+                  is_contract: false, // RugCheck doesn't provide this info
+                  transaction_count: 0, // RugCheck doesn't provide this info
+                  name: holder.owner === holder.address ? undefined : holder.owner,
+                  is_exchange: rugcheckData.knownAccounts[holder.owner]?.type === "AMM" || false
+                }));
+              
+              setHolders(mappedHolders);
+              setTokenInfo({
+                symbol: rugcheckData.tokenMeta?.symbol || "",
+                full_name: rugcheckData.tokenMeta?.name || ""
+              });
+            } else {
+              setError("No holder data available for this token");
+            }
           } else {
-            throw new Error("No holder data available from fallback API");
+            // Check for specific error codes that might indicate a wallet address
+            if (rugcheckResponse.status === 400) {
+              setError("This appears to be a wallet address, not a token address. Try using the wallet analysis feature instead.");
+            } else {
+              setError(`Unable to retrieve token holder data (Status: ${rugcheckResponse.status})`);
+            }
           }
         } catch (fallbackErr: any) {
           console.error("Error fetching token holders from fallback API:", fallbackErr);

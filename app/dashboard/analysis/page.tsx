@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
 import { TokenAnalysis } from "@/components/TokenAnalysis"
-import { TokenSearchForm } from "@/components/TokenSearchForm"
+import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
 
 // Define types for the async params
 type PageProps = {
@@ -45,7 +45,7 @@ export default async function TokenAnalysisPage({ params, searchParams }: PagePr
         {/* Search box centered */}
         <div className="mb-8 flex justify-center">
           <div className="w-full max-w-3xl">
-            <TokenSearchForm />
+            <EnhancedSearchForm />
           </div>
         </div>
         
@@ -54,10 +54,11 @@ export default async function TokenAnalysisPage({ params, searchParams }: PagePr
           <div className="bg-slate-800 rounded-xl border border-slate-700 p-8 text-center">
             <div className="max-w-md mx-auto">
               <Search className="h-12 w-12 mx-auto text-slate-500 mb-4" />
-              <h2 className="text-2xl font-bold mb-3">No Token Selected</h2>
+              <h2 className="text-2xl font-bold mb-3">No Address Selected</h2>
               <p className="text-slate-400 mb-6">
-                Please enter a Solana token address in the search bar to analyze its security, 
-                liquidity and holder distribution.
+                Please enter a Solana token or wallet address in the search bar above. 
+                Our system will automatically detect the address type and redirect you 
+                to the appropriate analysis page.
               </p>
               
               <Button className="bg-emerald-500 hover:bg-emerald-600 text-white" asChild>
