@@ -2,7 +2,7 @@
 
 ![Sollens](https://placehold.co/600x200/1e293b/22c55e?text=Sollens&font=montserrat)
 
-Sollens is a comprehensive analysis and verification platform for Solana tokens. It helps users check token authenticity, review metrics, and make informed decisions in seconds.
+Sollens is a comprehensive analysis and verification platform for Solana tokens and wallets. It helps users check token authenticity, review metrics, track wallet performance, and make informed decisions in seconds.
 
 ## Features
 
@@ -13,11 +13,23 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens.
 - **Holder Distribution**: Examine token distribution to identify concentration risks
 - **Scam Detection**: Identify common scam patterns and suspicious token behaviors
 - **On-Chain Activity**: Track real-time transactions and trading patterns
-- **Team Verification**: Verify team identities and previous project history
+
+
+### Wallet Analysis
+- **Risk Assessment**: Evaluate wallet risk factors and detect sanctioned addresses
+- **Trading Performance**: Track wallet profit and loss (PNL) across different time periods
+- **Token Holdings**: View all tokens held by a wallet with current values
+- **Transaction History**: Analyze recent transactions with detailed breakdowns
+- **Security Indicators**: Clear visual indicators for potential security concerns
+
+### Market Insights
+- **Solana DEX Metrics**: Real-time volume, trades, and market data from top Solana DEXes
+- **Network Mindshare**: Track Solana's prominence in crypto conversations and sentiment
+- **Social Sentiment**: Analyze positive/negative sentiment across social platforms
 
 ### User Experience
-- **Simple Token Search**: Easily search for any Solana token by address
-- **Recent History**: Keep track of recently analyzed tokens
+- **Universal Search**: Easily search for any Solana token or wallet address
+- **Recent History**: Keep track of recently analyzed addresses
 - **Detailed Reports**: Get comprehensive analysis with actionable insights
 - **Modern UI**: Clean, intuitive interface with clear data visualization
 - **Wallet Integration**: Seamless Solana wallet connection using Civic Auth
@@ -44,6 +56,8 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens.
 - **RugCheck**: Token safety verification and token data provider
 - **Bubblemaps**: Token decentralization and holder distribution analysis
 - **DexScreener**: DEX data, token pairs, and market analytics
+- **Messari**: Market metrics, DEX statistics, and network mindshare data
+- **Vybe Network**: Wallet trading performance and PNL tracking
 - **Solscan**: Blockchain explorer integration for transaction and account data
 
 ## Getting Started

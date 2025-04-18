@@ -30,6 +30,7 @@ import { WalletAnalysisData } from '@/lib/types';
 import { formatUSD } from '@/lib/utils';
 import { WalletAnalysisLoading } from "@/components/WalletAnalysisLoading";
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { WalletPNL } from "@/components/WalletPNL";
 
 interface WalletAnalysisProps {
   walletAddress: string;
@@ -401,6 +402,9 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
           ))}
         </div>
       </div>
+      
+      {/* WalletPNL */}
+      <WalletPNL walletAddress={walletAddress} />
       
       {/* Recent Transactions */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
