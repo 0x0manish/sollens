@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Connection, PublicKey, ParsedTransactionWithMeta } from "@solana/web3.js";
+import { createSolanaConnection, handleSolanaError } from "@/lib/solana-connection";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const address = searchParams.get('address');
-  const limit = searchParams.get('limit') || '5'; // Default to 5 transactions
+  const limitParam = searchParams.get('limit');
+  const limit = limitParam ? parseInt(limitParam, 10) : 5;
 
   if (!address) {
     return NextResponse.json(
@@ -14,18 +16,18 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const rpcEndpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT;
+    const rpcEndpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT as string;
     if (!rpcEndpoint) {
-      throw new Error("RPC endpoint not configured");
+      throw new Error("Solana RPC endpoint not configured");
     }
 
-    const connection = new Connection(rpcEndpoint);
+    const connection = createSolanaConnection(rpcEndpoint);
     const publicKey = new PublicKey(address);
     
     // Fetch parsed transaction signatures
     const signatures = await connection.getSignaturesForAddress(
       publicKey, 
-      { limit: parseInt(limit) }
+      { limit: limit }
     );
     
     // Fetch full transaction details

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Connection } from "@solana/web3.js";
 import { analyzeAddress } from "@/lib/address-utils";
 import { AlertCircle } from "lucide-react";
+import { createSolanaConnection, handleSolanaError } from "@/lib/solana-connection";
 
 export function EnhancedSearchForm() {
   const [address, setAddress] = useState("");
@@ -43,20 +44,44 @@ export function EnhancedSearchForm() {
         throw new Error("RPC endpoint not configured");
       }
       
-      const connection = new Connection(rpcEndpoint);
-      const analysis = await analyzeAddress(trimmedAddress, connection);
+      // Use our enhanced connection with retry logic for rate limiting
+      const connection = createSolanaConnection(rpcEndpoint);
       
-      if (!analysis.isValid) {
-        setError(analysis.error || "Invalid address");
+      try {
+        const analysis = await analyzeAddress(trimmedAddress, connection);
+        
+        if (!analysis.isValid) {
+          setError(analysis.error || "Invalid address");
+          setIsProcessing(false);
+          return;
+        }
+        
+        // Redirect based on detected address type
+        if (analysis.type === 'token') {
+          router.push(`/dashboard/analysis?tokenAddress=${trimmedAddress}`);
+        } else {
+          const currentUrl = window.location.pathname + window.location.search;
+          const targetUrl = `/dashboard/wallet?address=${trimmedAddress}`;
+          
+          // If we're already on the same URL, force a refresh
+          if (currentUrl === targetUrl) {
+            // Add a timestamp to force refresh
+            router.refresh();
+            
+            // Reset loading state after a short delay
+            setTimeout(() => {
+              setIsProcessing(false);
+            }, 1000);
+          } else {
+            router.push(targetUrl);
+          }
+        }
+      } catch (error) {
+        console.error("Address analysis error:", error);
+        // Use our enhanced error handler for user-friendly messages
+        const friendlyError = handleSolanaError(error);
+        setError(friendlyError);
         setIsProcessing(false);
-        return;
-      }
-      
-      // Redirect based on detected address type
-      if (analysis.type === 'token') {
-        router.push(`/dashboard/analysis?tokenAddress=${trimmedAddress}`);
-      } else {
-        router.push(`/dashboard/wallet?address=${trimmedAddress}`);
       }
     } catch (error) {
       console.error("Address analysis error:", error);

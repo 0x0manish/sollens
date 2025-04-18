@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { createSolanaConnection, handleSolanaError } from "@/lib/solana-connection";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -14,12 +15,15 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const rpcEndpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT;
+    // Use the Solana RPC endpoint from environment variables
+    const rpcEndpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT as string;
     if (!rpcEndpoint) {
-      throw new Error("RPC endpoint not configured");
+      throw new Error("Solana RPC endpoint not configured");
     }
 
-    const connection = new Connection(rpcEndpoint);
+    // Use our enhanced connection with retry logic
+    const connection = createSolanaConnection(rpcEndpoint);
+
     const publicKey = new PublicKey(address);
     
     // Fetch all token accounts owned by this wallet
