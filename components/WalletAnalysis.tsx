@@ -172,8 +172,9 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
     }
   }
 
-  if (loading && transactionsLoading && tokensLoading && sanctionedLoading) {
-    return <WalletAnalysisLoadingSkeleton />;
+  // Show the loading state if any of the core data is still loading
+  if (loading) {
+    return <WalletAnalysisLoading />;
   }
 
   if (error) {
