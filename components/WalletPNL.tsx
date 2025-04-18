@@ -14,11 +14,13 @@ import {
   ArrowDown,
   Landmark,
   Coins,
-  RefreshCw
+  RefreshCw,
+  Copy
 } from 'lucide-react';
 import { formatUSD, formatNumber } from '@/lib/utils';
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface WalletPNLProps {
   walletAddress: string;
@@ -304,7 +306,28 @@ export function WalletPNL({ walletAddress }: WalletPNLProps) {
               </div>
               <div>
                 <div className="font-medium">{summary.bestPerformingToken.tokenSymbol}</div>
-                <div className="text-xs text-slate-400">{summary.bestPerformingToken.tokenName || summary.bestPerformingToken.tokenAddress}</div>
+                {summary.bestPerformingToken.tokenAddress ? (
+                  <div 
+                    className="text-xs text-slate-400 flex items-center cursor-pointer group"
+                    onClick={() => {
+                      navigator.clipboard.writeText(summary.bestPerformingToken.tokenAddress);
+                      toast.success('Address copied', {
+                        style: {
+                          background: '#1e293b',
+                          color: '#e2e8f0',
+                          border: '1px solid #334155'
+                        }
+                      });
+                    }}
+                  >
+                    <span className="group-hover:text-emerald-500 transition-colors">
+                      {summary.bestPerformingToken.tokenAddress.substring(0, 8)}...{summary.bestPerformingToken.tokenAddress.substring(summary.bestPerformingToken.tokenAddress.length - 8)}
+                    </span>
+                    <Copy className="h-2.5 w-2.5 ml-1 text-slate-500 group-hover:text-emerald-500 transition-colors" />
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-400">{summary.bestPerformingToken.tokenName || 'Unknown'}</div>
+                )}
               </div>
             </div>
           </div>
@@ -341,7 +364,28 @@ export function WalletPNL({ walletAddress }: WalletPNLProps) {
               </div>
               <div>
                 <div className="font-medium">{summary.worstPerformingToken.tokenSymbol}</div>
-                <div className="text-xs text-slate-400">{summary.worstPerformingToken.tokenName || summary.worstPerformingToken.tokenAddress}</div>
+                {summary.worstPerformingToken.tokenAddress ? (
+                  <div 
+                    className="text-xs text-slate-400 flex items-center cursor-pointer group"
+                    onClick={() => {
+                      navigator.clipboard.writeText(summary.worstPerformingToken.tokenAddress);
+                      toast.success('Address copied', {
+                        style: {
+                          background: '#1e293b',
+                          color: '#e2e8f0',
+                          border: '1px solid #334155'
+                        }
+                      });
+                    }}
+                  >
+                    <span className="group-hover:text-emerald-500 transition-colors">
+                      {summary.worstPerformingToken.tokenAddress.substring(0, 8)}...{summary.worstPerformingToken.tokenAddress.substring(summary.worstPerformingToken.tokenAddress.length - 8)}
+                    </span>
+                    <Copy className="h-2.5 w-2.5 ml-1 text-slate-500 group-hover:text-emerald-500 transition-colors" />
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-400">{summary.worstPerformingToken.tokenName || 'Unknown'}</div>
+                )}
               </div>
             </div>
           </div>
@@ -378,10 +422,34 @@ export function WalletPNL({ walletAddress }: WalletPNLProps) {
                               className="object-cover"
                             />
                           ) : (
-                            <Coins className="h-3.5 w-3.5 text-slate-400" />
+                            <div className="text-[10px] text-slate-300 font-medium">
+                              {token.tokenSymbol ? token.tokenSymbol.substring(0, 1) : '?'}
+                            </div>
                           )}
                         </div>
-                        <span className="font-medium">{token.tokenSymbol || 'Unknown'}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{token.tokenSymbol || 'Unknown'}</span>
+                          {token.tokenAddress && (
+                            <div 
+                              className="text-[10px] text-slate-400 flex items-center cursor-pointer group"
+                              onClick={() => {
+                                navigator.clipboard.writeText(token.tokenAddress);
+                                toast.success('Address copied', {
+                                  style: {
+                                    background: '#1e293b',
+                                    color: '#e2e8f0',
+                                    border: '1px solid #334155'
+                                  }
+                                });
+                              }}
+                            >
+                              <span className="group-hover:text-emerald-500 transition-colors">
+                                {token.tokenAddress.substring(0, 8)}...{token.tokenAddress.substring(token.tokenAddress.length - 8)}
+                              </span>
+                              <Copy className="h-2.5 w-2.5 ml-1 text-slate-500 group-hover:text-emerald-500 transition-colors" />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="py-3 text-right">
