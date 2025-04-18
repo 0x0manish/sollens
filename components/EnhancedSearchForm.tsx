@@ -1,0 +1,103 @@
+"use client";
+
+import { useState, FormEvent, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Connection } from "@solana/web3.js";
+import { analyzeAddress } from "@/lib/address-utils";
+import { AlertCircle } from "lucide-react";
+
+export function EnhancedSearchForm() {
+  const [address, setAddress] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Reset state on component mount and URL changes
+  useEffect(() => {
+    const currentAddress = searchParams.get('address') || searchParams.get('tokenAddress');
+    if (currentAddress) {
+      setAddress(currentAddress);
+    }
+    setIsProcessing(false);
+    setError(null);
+  }, [searchParams]);
+  
+  const handleSearch = async (e: FormEvent) => {
+    e.preventDefault();
+    const trimmedAddress = address.trim();
+    
+    if (!trimmedAddress) {
+      setError("Please enter a Solana address");
+      return;
+    }
+    
+    setError(null);
+    setIsProcessing(true);
+    
+    try {
+      // Auto-detect address type
+      const rpcEndpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT;
+      if (!rpcEndpoint) {
+        throw new Error("RPC endpoint not configured");
+      }
+      
+      const connection = new Connection(rpcEndpoint);
+      const analysis = await analyzeAddress(trimmedAddress, connection);
+      
+      if (!analysis.isValid) {
+        setError(analysis.error || "Invalid address");
+        setIsProcessing(false);
+        return;
+      }
+      
+      // Redirect based on detected address type
+      if (analysis.type === 'token') {
+        router.push(`/dashboard/analysis?tokenAddress=${trimmedAddress}`);
+      } else {
+        router.push(`/dashboard/wallet?address=${trimmedAddress}`);
+      }
+    } catch (error) {
+      console.error("Address analysis error:", error);
+      setError(error instanceof Error ? error.message : "Error analyzing address");
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="w-full">
+      <form onSubmit={handleSearch} className="flex w-full flex-col">
+        <div className="flex w-full items-center">
+          <input
+            type="text"
+            name="address"
+            value={address}
+            onChange={(e) => {
+              setAddress(e.target.value);
+              setError(null);
+            }}
+            placeholder="Enter Solana token or wallet address"
+            className="bg-slate-700 rounded-lg px-4 py-3 w-full text-white outline-none border border-slate-600 focus:border-emerald-500 transition-colors"
+          />
+          <Button 
+            type="submit" 
+            className="ml-3 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-6"
+            disabled={isProcessing}
+          >
+            {isProcessing ? (
+              <span className="animate-pulse">Analyzing...</span>
+            ) : "Analyze"}
+          </Button>
+        </div>
+        
+        {error && (
+          <div className="mt-2 text-red-400 text-sm flex items-center">
+            <AlertCircle className="h-4 w-4 mr-1" />
+            <span>{error}</span>
+          </div>
+        )}
+      </form>
+    </div>
+  );
+}

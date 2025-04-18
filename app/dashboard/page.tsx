@@ -4,7 +4,7 @@ import Link from "next/link"
 import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
 import { RecentTokens } from "@/components/RecentTokens"
-import { TokenSearchForm } from "@/components/TokenSearchForm"
+import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
 
 export default async function DashboardPage() {
   const user = await getUser()
@@ -34,7 +34,7 @@ export default async function DashboardPage() {
         <div className="relative max-w-4xl mx-auto mb-12">
           <div className="absolute -inset-0.5 bg-emerald-500/30 rounded-xl blur"></div>
           <div className="relative bg-slate-800 rounded-lg p-4 flex items-center">
-            <TokenSearchForm />
+            <EnhancedSearchForm />
           </div>
         </div>
         
@@ -63,4 +63,4 @@ export default async function DashboardPage() {
       </footer>
     </div>
   )
-} 
+}
