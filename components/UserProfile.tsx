@@ -17,6 +17,7 @@ export function UserProfile() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
@@ -47,11 +48,25 @@ export function UserProfile() {
         // Debug user context in console
         console.log("User context:", userContext);
 
-        // Check for profile picture in user data
+        // Reset image error state
+        setImageError(false);
+
+        // Check for profile picture in user data with better handling for Google images
         if (userContext.user?.image) {
           setProfilePicture(userContext.user.image as string);
         } else if ((userContext.user as any)?.picture) {
-          setProfilePicture((userContext.user as any).picture as string);
+          // Google often provides picture URL here
+          const pictureUrl = (userContext.user as any).picture as string;
+          console.log("Found Google profile picture URL:", pictureUrl);
+          
+          try {
+            // Handle special characters in URL
+            const sanitizedUrl = pictureUrl.replace(/=s\d+-c/, '=s160-c');
+            setProfilePicture(sanitizedUrl);
+          } catch (error) {
+            console.error("Error processing profile picture URL:", error);
+            setProfilePicture(null);
+          }
         } else if ((userContext.user as any)?.photos?.[0]?.value) {
           setProfilePicture((userContext.user as any).photos[0].value as string);
         }
@@ -174,6 +189,29 @@ export function UserProfile() {
     }
   };
 
+  // Function to render profile picture with error handling
+  const renderProfilePicture = (size: 'sm' | 'lg') => {
+    if (profilePicture && !imageError) {
+      return (
+        <>
+          {/* Fallback to standard img tag to avoid Next.js Image restrictions */}
+          <img 
+            src={profilePicture} 
+            alt="Profile" 
+            className={`rounded-full object-cover ${size === 'sm' ? 'h-10 w-10' : 'h-12 w-12'}`}
+            onError={(e) => {
+              console.error("Failed to load profile image:", profilePicture);
+              setImageError(true);
+            }}
+          />
+        </>
+      );
+    } else {
+      // Fallback to icon
+      return <User className={size === 'sm' ? 'h-5 w-5 text-slate-300' : 'h-6 w-6 text-slate-300'} />;
+    }
+  };
+
   return (
     <div className="flex items-center gap-4 relative">
       {/* Buy Credits Button */}
@@ -202,11 +240,7 @@ export function UserProfile() {
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <div className="h-10 w-10 rounded-full flex items-center justify-center overflow-hidden">
-            {profilePicture ? (
-              <img src={profilePicture} alt="Profile Picture" className="h-10 w-10 rounded-full object-cover" />
-            ) : (
-              <User className="h-5 w-5 text-slate-300" />
-            )}
+            {renderProfilePicture('sm')}
           </div>
         </Button>
 
@@ -214,12 +248,8 @@ export function UserProfile() {
           <div className="absolute top-full right-0 mt-2 w-64 rounded-lg bg-slate-800 border border-slate-700 shadow-lg z-50">
             <div className="p-4">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="h-12 w-12 rounded-full bg-slate-700 flex items-center justify-center">
-                  {profilePicture ? (
-                    <img src={profilePicture} alt="Profile Picture" className="h-12 w-12 rounded-full object-cover" />
-                  ) : (
-                    <User className="h-6 w-6 text-slate-300" />
-                  )}
+                <div className="h-12 w-12 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden">
+                  {renderProfilePicture('lg')}
                 </div>
                 <div>
                   <p className="font-medium">{userContext.user?.name || "Solana User"}</p>
