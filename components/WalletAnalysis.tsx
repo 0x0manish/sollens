@@ -228,7 +228,7 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
                 </div>
                 
                 <div className="bg-slate-700 px-3 py-1 rounded-full text-xs font-medium text-slate-300">
-                  {address_info.transaction_count || 0} Transactions
+                  {address_info.transaction_count === 1000 ? '1000+' : address_info.transaction_count || 0} Transactions
                 </div>
               </div>
             </div>
@@ -295,7 +295,9 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
           <div className="flex justify-between items-start">
             <div>
               <div className="text-sm text-slate-400 mb-1">Transaction Count</div>
-              <div className="text-lg font-bold">{address_info.transaction_count || 0}</div>
+              <div className="text-lg font-bold">
+                {address_info.transaction_count === 1000 ? '1000+' : address_info.transaction_count || 0}
+              </div>
             </div>
             <div className="bg-slate-700/50 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
               <Activity className="h-5 w-5 text-emerald-500" />
