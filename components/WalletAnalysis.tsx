@@ -317,43 +317,66 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
       
       {/* Risk Assessment */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-        <h2 className="text-lg font-semibold mb-4 flex items-center">
-          <ShieldAlert className="mr-2 h-5 w-5 text-emerald-500" />
-          Risk Assessment
-        </h2>
-        
-        {/* Sanctioned Status */}
-        <div className="mb-6">
-          <h3 className="text-md font-medium mb-2 flex items-center">
-            <Lock className="mr-2 h-4 w-4 text-slate-400" />
-            Sanctioned Status
-          </h3>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center">
+            <div className="bg-slate-700/50 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+              <ShieldAlert className="h-4 w-4 text-emerald-500" />
+            </div>
+            <h2 className="text-lg font-semibold">Risk Assessment</h2>
+          </div>
           
-          {sanctionedLoading ? (
-            <div className="flex items-center">
-              <Skeleton className="h-5 w-5 bg-slate-700 rounded-full mr-2" />
-              <Skeleton className="h-4 w-32 bg-slate-700" />
+          {/* Webacy DD Logo - Circular */}
+          <div className="flex items-center">
+            <span className="text-xs text-slate-400 mr-2">DD by Webacy</span>
+            <a 
+              href="https://dd.xyz" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-6 h-6 rounded-full overflow-hidden border border-slate-700 flex items-center justify-center hover:border-emerald-500 transition-colors"
+              title="Visit DD by Webacy"
+            >
+              <img 
+                src="/DD.jpg" 
+                alt="DD by Webacy" 
+                className="w-full h-full object-cover" 
+              />
+            </a>
+          </div>
+        </div>
+        
+        {/* Sanctioned Status - Improved layout */}
+        <div className="mb-6 bg-slate-900/50 p-4 rounded-lg">
+          <div className="flex items-center">
+            <div className="flex items-center mr-3">
+              <Lock className="mr-2 h-4 w-4 text-slate-400" />
+              <span className="text-slate-300">Sanctioned Status:</span>
             </div>
-          ) : sanctionedError ? (
-            <div className="text-red-500 text-sm flex items-center">
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              Error loading sanctioned status
-            </div>
-          ) : (
-            <div className={`flex items-center ${sanctionedData?.is_sanctioned ? 'text-red-500' : 'text-emerald-500'}`}>
-              {sanctionedData?.is_sanctioned ? (
-                <>
-                  <AlertTriangle className="h-5 w-5 mr-2" />
-                  <span className="font-medium">Sanctioned Address</span>
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="h-5 w-5 mr-2" />
-                  <span className="font-medium">Not Sanctioned</span>
-                </>
-              )}
-            </div>
-          )}
+            
+            {sanctionedLoading ? (
+              <div className="flex items-center">
+                <Skeleton className="h-5 w-32 bg-slate-700" />
+              </div>
+            ) : sanctionedError ? (
+              <div className="text-red-500 text-sm flex items-center">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                Error loading data
+              </div>
+            ) : (
+              <div className={`flex items-center ${sanctionedData?.is_sanctioned ? 'text-red-500' : 'text-emerald-500'}`}>
+                {sanctionedData?.is_sanctioned ? (
+                  <>
+                    <AlertTriangle className="h-5 w-5 mr-2" />
+                    <span className="font-medium">Sanctioned Address</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="h-5 w-5 mr-2" />
+                    <span className="font-medium">Not Sanctioned</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="space-y-4">
@@ -376,13 +399,6 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="mt-4 text-sm text-slate-400 flex items-center">
-          <Info className="h-4 w-4 mr-2" />
-          <p>
-            This assessment is based on on-chain data and is not financial advice. Always do your own research.
-          </p>
         </div>
       </div>
       
