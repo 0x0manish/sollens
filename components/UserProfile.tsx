@@ -22,6 +22,7 @@ export function UserProfile() {
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
   const [showBuyCreditsDialog, setShowBuyCreditsDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -68,7 +69,12 @@ export function UserProfile() {
   useEffect(() => {
     async function initializeWallet() {
       try {
-        if (!userContext.user) return;
+        setIsLoading(true);
+        
+        if (!userContext.user) {
+          // No user yet, keep the loading state
+          return;
+        }
 
         // Debug user context in console
         console.log("User context:", userContext);
@@ -102,13 +108,13 @@ export function UserProfile() {
           // Try to access the wallet address using various possible paths based on documentation
           if ((userContext as any).solana?.address) {
             setWalletAddress((userContext as any).solana.address);
-            fetchWalletBalance((userContext as any).solana.address);
+            await fetchWalletBalance((userContext as any).solana.address);
           } else if ((userContext as any).solana?.wallet?.publicKey?.toString()) {
             setWalletAddress((userContext as any).solana.wallet.publicKey.toString());
-            fetchWalletBalance((userContext as any).solana.wallet.publicKey);
+            await fetchWalletBalance((userContext as any).solana.wallet.publicKey);
           } else if ((userContext as any).publicKey?.toString()) {
             setWalletAddress((userContext as any).publicKey.toString());
-            fetchWalletBalance((userContext as any).publicKey);
+            await fetchWalletBalance((userContext as any).publicKey);
           } else {
             console.log("Wallet exists but address not found in expected location");
           }
@@ -121,13 +127,13 @@ export function UserProfile() {
             // Check structure again after creation
             if ((userContext as any).solana?.address) {
               setWalletAddress((userContext as any).solana.address);
-              fetchWalletBalance((userContext as any).solana.address);
+              await fetchWalletBalance((userContext as any).solana.address);
             } else if ((userContext as any).solana?.wallet?.publicKey?.toString()) {
               setWalletAddress((userContext as any).solana.wallet.publicKey.toString());
-              fetchWalletBalance((userContext as any).solana.wallet.publicKey);
+              await fetchWalletBalance((userContext as any).solana.wallet.publicKey);
             } else if ((userContext as any).publicKey?.toString()) {
               setWalletAddress((userContext as any).publicKey.toString());
-              fetchWalletBalance((userContext as any).publicKey);
+              await fetchWalletBalance((userContext as any).publicKey);
             }
           } catch (error) {
             console.error("Failed to create wallet:", error);
@@ -137,10 +143,20 @@ export function UserProfile() {
         }
       } catch (error) {
         console.error("Error in wallet initialization:", error);
+      } finally {
+        // End loading state when initialization is complete
+        setIsLoading(false);
       }
     }
 
     initializeWallet();
+    
+    // Set up a timeout to end loading state even if there are issues
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000); // 5 second maximum loading time
+    
+    return () => clearTimeout(timeoutId);
   }, [userContext]);
 
   const handleSignOut = async () => {
@@ -259,172 +275,183 @@ export function UserProfile() {
 
   return (
     <div className="flex items-center gap-4 relative">
-      {/* Buy Credits Button */}
-      <Button
-        variant="default"
-        size="sm"
-        className="bg-emerald-500 text-white hover:bg-transparent hover:text-emerald-500 hover:border-emerald-500 border border-emerald-500 transition-colors"
-        onClick={() => {
-          // Only show the dialog if user has a wallet
-          if (userHasWallet(userContext) && walletAddress) {
-            setShowBuyCreditsDialog(true);
-          } else {
-            // We could show a toast notification here about needing a wallet first
-            console.log("User needs a wallet to buy credits");
-          }
-        }}
-      >
-        <CreditCard className="h-4 w-4 mr-2" />
-        Buy Credits
-      </Button>
+      {isLoading ? (
+        // Loading state UI
+        <div className="flex items-center space-x-2 py-2">
+          <div className="h-8 w-8 rounded-full bg-slate-700 animate-pulse"></div>
+          <div className="h-6 w-24 bg-slate-700 animate-pulse rounded"></div>
+        </div>
+      ) : (
+        // Fully loaded UI
+        <>
+          {/* Buy Credits Button */}
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-emerald-500 text-white hover:bg-transparent hover:text-emerald-500 hover:border-emerald-500 border border-emerald-500 transition-colors"
+            onClick={() => {
+              // Only show the dialog if user has a wallet
+              if (userHasWallet(userContext) && walletAddress) {
+                setShowBuyCreditsDialog(true);
+              } else {
+                // We could show a toast notification here about needing a wallet first
+                console.log("User needs a wallet to buy credits");
+              }
+            }}
+          >
+            <CreditCard className="h-4 w-4 mr-2" />
+            Buy Credits
+          </Button>
 
-      <div className="relative" ref={dropdownRef}>
-        <Button
-          variant="ghost"
-          className="rounded-full h-10 w-10 p-0 bg-slate-700 hover:bg-slate-600"
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
-          <div className="h-10 w-10 rounded-full flex items-center justify-center overflow-hidden">
-            {renderProfilePicture('sm')}
-          </div>
-        </Button>
-
-        {isDropdownOpen && (
-          <div className="absolute top-full right-0 mt-2 w-64 rounded-lg bg-slate-800 border border-slate-700 shadow-lg z-50">
-            <div className="p-4">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="h-12 w-12 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden">
-                  {renderProfilePicture('lg')}
-                </div>
-                <div>
-                  <p className="font-medium">{userContext.user?.name || "Solana User"}</p>
-                  <p className="text-xs text-slate-400">Authenticated with Civic</p>
-                </div>
+          <div className="relative" ref={dropdownRef}>
+            <Button
+              variant="ghost"
+              className="rounded-full h-10 w-10 p-0 bg-slate-700 hover:bg-slate-600"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <div className="h-10 w-10 rounded-full flex items-center justify-center overflow-hidden">
+                {renderProfilePicture('sm')}
               </div>
+            </Button>
 
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-400">Authentication</span>
-                  <span className="text-emerald-400 flex items-center">
-                    <Check className="h-3 w-3 mr-1" /> Verified
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-400">Wallet</span>
-                  {isCreatingWallet ? (
-                    <span className="text-slate-300 text-xs">Creating...</span>
-                  ) : walletAddress ? (
-                    <span className="text-emerald-400 flex items-center">
-                      <Check className="h-3 w-3 mr-1" /> Connected
-                    </span>
-                  ) : (
-                    <span className="text-slate-300 text-xs">Not connected</span>
-                  )}
-                </div>
-
-                {walletAddress && (
-                  <div className="bg-slate-700/50 p-2 rounded flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Wallet className="h-3 w-3 text-emerald-500 mr-2" />
-                      <span className="text-xs font-mono text-slate-300" title={walletAddress}>
-                        {minifyAddress(walletAddress)}
-                      </span>
+            {isDropdownOpen && (
+              <div className="absolute top-full right-0 mt-2 w-64 rounded-lg bg-slate-800 border border-slate-700 shadow-lg z-50">
+                <div className="p-4">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="h-12 w-12 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden">
+                      {renderProfilePicture('lg')}
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <a
-                        href={`https://solscan.io/account/${walletAddress}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="View on Solscan"
-                        className="text-slate-400 hover:text-emerald-400 transition-colors"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0"
-                        onClick={copyToClipboard}
-                        title="Copy wallet address"
-                      >
-                        <Copy className={`h-3 w-3 ${isCopied ? 'text-emerald-400' : 'text-slate-400'}`} />
-                      </Button>
+                    <div>
+                      <p className="font-medium">{userContext.user?.name || "Solana User"}</p>
+                      <p className="text-xs text-slate-400">Authenticated with Civic</p>
                     </div>
                   </div>
-                )}
 
-                {walletAddress && (
-                  <div className="bg-slate-700/50 p-2 rounded mt-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Wallet className="h-3 w-3 text-emerald-500 mr-2" />
-                        <span className="text-xs text-slate-400">SOL Balance:</span>
-                      </div>
-                      <span className="text-xs font-mono font-medium text-emerald-400">
-                        {isLoadingBalance ? (
-                          <span className="text-slate-300">Loading...</span>
-                        ) : walletBalance !== null ? (
-                          `${walletBalance.toFixed(4)} SOL`
-                        ) : (
-                          <span className="text-slate-300">Error loading balance</span>
-                        )}
+                  <div className="space-y-3 mb-4">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Authentication</span>
+                      <span className="text-emerald-400 flex items-center">
+                        <Check className="h-3 w-3 mr-1" /> Verified
                       </span>
                     </div>
 
-                    {walletBalance !== null && walletBalance > 0.001 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full mt-2 bg-transparent border-slate-600 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300"
-                        onClick={() => {
-                          setIsDropdownOpen(false);
-                          setTimeout(() => setShowWithdrawDialog(true), 300);
-                        }}
-                      >
-                        <ArrowUpRight className="h-3 w-3 mr-1" />
-                        Withdraw Balance
-                      </Button>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Wallet</span>
+                      {isCreatingWallet ? (
+                        <span className="text-slate-300 text-xs">Creating...</span>
+                      ) : walletAddress ? (
+                        <span className="text-emerald-400 flex items-center">
+                          <Check className="h-3 w-3 mr-1" /> Connected
+                        </span>
+                      ) : (
+                        <span className="text-slate-300 text-xs">Not connected</span>
+                      )}
+                    </div>
+
+                    {walletAddress && (
+                      <div className="bg-slate-700/50 p-2 rounded flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Wallet className="h-3 w-3 text-emerald-500 mr-2" />
+                          <span className="text-xs font-mono text-slate-300" title={walletAddress}>
+                            {minifyAddress(walletAddress)}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <a
+                            href={`https://solscan.io/account/${walletAddress}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="View on Solscan"
+                            className="text-slate-400 hover:text-emerald-400 transition-colors"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={copyToClipboard}
+                            title="Copy wallet address"
+                          >
+                            <Copy className={`h-3 w-3 ${isCopied ? 'text-emerald-400' : 'text-slate-400'}`} />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {walletAddress && (
+                      <div className="bg-slate-700/50 p-2 rounded mt-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <Wallet className="h-3 w-3 text-emerald-500 mr-2" />
+                            <span className="text-xs text-slate-400">SOL Balance:</span>
+                          </div>
+                          <span className="text-xs font-mono font-medium text-emerald-400">
+                            {isLoadingBalance ? (
+                              <span className="text-slate-300">Loading...</span>
+                            ) : walletBalance !== null ? (
+                              `${walletBalance.toFixed(4)} SOL`
+                            ) : (
+                              <span className="text-slate-300">Error loading balance</span>
+                            )}
+                          </span>
+                        </div>
+
+                        {walletBalance !== null && walletBalance > 0.001 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full mt-2 bg-transparent border-slate-600 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300"
+                            onClick={() => {
+                              setIsDropdownOpen(false);
+                              setTimeout(() => setShowWithdrawDialog(true), 300);
+                            }}
+                          >
+                            <ArrowUpRight className="h-3 w-3 mr-1" />
+                            Withdraw Balance
+                          </Button>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
 
-              <div className="pt-3 border-t border-slate-700">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-slate-300 hover:bg-slate-700 hover:text-white"
-                  onClick={handleSignOut}
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  <span>Sign Out</span>
-                </Button>
+                  <div className="pt-3 border-t border-slate-700">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-slate-300 hover:bg-slate-700 hover:text-white"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      <span>Sign Out</span>
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Withdraw Dialog */}
-      {userHasWallet(userContext) && (userContext as any).solana?.wallet && (
-        <WithdrawDialog
-          open={showWithdrawDialog}
-          onOpenChange={setShowWithdrawDialog}
-          walletBalance={walletBalance}
-          walletPublicKey={walletAddress}
-          solanaWallet={(userContext as any).solana.wallet}
-        />
-      )}
+          {/* Withdraw Dialog */}
+          {userHasWallet(userContext) && (userContext as any).solana?.wallet && (
+            <WithdrawDialog
+              open={showWithdrawDialog}
+              onOpenChange={setShowWithdrawDialog}
+              walletBalance={walletBalance}
+              walletPublicKey={walletAddress}
+              solanaWallet={(userContext as any).solana.wallet}
+            />
+          )}
 
-      {/* Buy Credits Dialog */}
-      {userHasWallet(userContext) && (userContext as any).solana?.wallet && (
-        <BuyCreditsDialog
-          open={showBuyCreditsDialog}
-          onOpenChange={setShowBuyCreditsDialog}
-          walletBalance={walletBalance}
-          walletPublicKey={walletAddress}
-          solanaWallet={(userContext as any).solana.wallet}
-        />
+          {/* Buy Credits Dialog */}
+          {userHasWallet(userContext) && (userContext as any).solana?.wallet && (
+            <BuyCreditsDialog
+              open={showBuyCreditsDialog}
+              onOpenChange={setShowBuyCreditsDialog}
+              walletBalance={walletBalance}
+              walletPublicKey={walletAddress}
+              solanaWallet={(userContext as any).solana.wallet}
+            />
+          )}
+        </>
       )}
     </div>
   );
