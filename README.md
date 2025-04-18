@@ -32,7 +32,7 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens 
 - **Recent History**: Keep track of recently analyzed addresses
 - **Detailed Reports**: Get comprehensive analysis with actionable insights
 - **Modern UI**: Clean, intuitive interface with clear data visualization
-- **Wallet Integration**: Seamless Solana wallet connection using Civic Auth
+- **Wallet Integration**: Seamless Solana wallet connection using Civic Auth and web3
 
 ## Technology Stack
 
@@ -45,7 +45,7 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens 
 
 ### Authentication
 - **Civic Auth**: Web3 authentication service
-- **Solana Wallet Adapter**: Integration with Solana wallets
+
 
 ### Blockchain Integration
 - **@solana/web3.js**: Library for interacting with the Solana blockchain
@@ -88,6 +88,11 @@ CIVIC_CLIENT_ID=your_civic_client_id
 # Solana Configuration
 NEXT_PUBLIC_SOLANA_RPC_ENDPOINT=your_solana_rpc_endpoint
 NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
+
+# API Keys
+WEBACY_API_KEY=your_webacy_api_key
+MESSARI_API_KEY=your_messari_api_key
+VYBE_API_KEY=your_vybe_api_key
 ```
 
 4. Run the development server
