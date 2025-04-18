@@ -39,6 +39,31 @@ export function UserProfile() {
     };
   }, []);
 
+  // Function to safely validate and sanitize profile image URLs
+  const sanitizeImageUrl = (url: string): string | null => {
+    try {
+      // Validate it's a proper URL
+      new URL(url);
+      
+      // Handle Google profile images specifically
+      if (url.includes('googleusercontent.com')) {
+        // Google images - Replace size parameters more reliably
+        // Remove all size and crop parameters to get base URL
+        let sanitized = url.split('=')[0];
+        
+        // Add a size that works well for avatars and is more reliable
+        sanitized += '=s96-c';
+        return sanitized;
+      }
+      
+      // For all other URLs, return as is if they pass URL validation
+      return url;
+    } catch (error) {
+      console.warn("Invalid image URL:", url, error);
+      return null;
+    }
+  };
+
   // Initialize and check for wallet when component mounts
   useEffect(() => {
     async function initializeWallet() {
@@ -50,27 +75,29 @@ export function UserProfile() {
 
         // Reset image error state
         setImageError(false);
+        setProfilePicture(null);
 
-        // Check for profile picture in user data with better handling for Google images
+        // Check for profile picture in user data with enhanced validation
+        let imageUrl: string | null = null;
+        
         if (userContext.user?.image) {
-          setProfilePicture(userContext.user.image as string);
+          imageUrl = userContext.user.image as string;
         } else if ((userContext.user as any)?.picture) {
-          // Google often provides picture URL here
-          const pictureUrl = (userContext.user as any).picture as string;
-          console.log("Found Google profile picture URL:", pictureUrl);
-          
-          try {
-            // Handle special characters in URL
-            const sanitizedUrl = pictureUrl.replace(/=s\d+-c/, '=s160-c');
-            setProfilePicture(sanitizedUrl);
-          } catch (error) {
-            console.error("Error processing profile picture URL:", error);
-            setProfilePicture(null);
-          }
+          imageUrl = (userContext.user as any).picture as string;
         } else if ((userContext.user as any)?.photos?.[0]?.value) {
-          setProfilePicture((userContext.user as any).photos[0].value as string);
+          imageUrl = (userContext.user as any).photos[0].value as string;
+        }
+        
+        // Validate and sanitize URL if we found one
+        if (imageUrl) {
+          const sanitizedUrl = sanitizeImageUrl(imageUrl);
+          if (sanitizedUrl) {
+            setProfilePicture(sanitizedUrl);
+            console.log("Using sanitized profile image URL:", sanitizedUrl);
+          }
         }
 
+        // Check for wallet when component mounts
         if (userHasWallet(userContext)) {
           // Try to access the wallet address using various possible paths based on documentation
           if ((userContext as any).solana?.address) {
@@ -189,26 +216,44 @@ export function UserProfile() {
     }
   };
 
-  // Function to render profile picture with error handling
+  // Function to render profile picture with improved error handling
   const renderProfilePicture = (size: 'sm' | 'lg') => {
     if (profilePicture && !imageError) {
       return (
         <>
-          {/* Fallback to standard img tag to avoid Next.js Image restrictions */}
+          {/* Fallback to standard img tag with enhanced error handling */}
           <img 
             src={profilePicture} 
             alt="Profile" 
             className={`rounded-full object-cover ${size === 'sm' ? 'h-10 w-10' : 'h-12 w-12'}`}
             onError={(e) => {
-              console.error("Failed to load profile image:", profilePicture);
+              // Prevent infinite error loops by removing the src
+              const imgElement = e.currentTarget;
+              imgElement.onerror = null;
+              
+              console.warn("Failed to load profile image:", profilePicture);
               setImageError(true);
+              
+              // Provide fallback styling to ensure UI looks correct
+              if (size === 'sm') {
+                imgElement.classList.add('hidden');
+              } else {
+                imgElement.classList.add('hidden');
+              }
             }}
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
           />
         </>
       );
     } else {
-      // Fallback to icon
-      return <User className={size === 'sm' ? 'h-5 w-5 text-slate-300' : 'h-6 w-6 text-slate-300'} />;
+      // Fallback to icon with appropriate sizing
+      return (
+        <div className={`flex items-center justify-center bg-slate-700 rounded-full 
+          ${size === 'sm' ? 'h-10 w-10' : 'h-12 w-12'}`}>
+          <User className={size === 'sm' ? 'h-5 w-5 text-slate-300' : 'h-6 w-6 text-slate-300'} />
+        </div>
+      );
     }
   };
 
