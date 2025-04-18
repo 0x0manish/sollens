@@ -199,248 +199,276 @@ export function WalletPNL({ walletAddress }: WalletPNLProps) {
           <span className="text-slate-400 mr-1">Period:</span>
           <button
             onClick={() => setResolution('7d')}
-            className={`px-2 py-1 rounded ${resolution === '7d' ? 'bg-emerald-500/20 text-emerald-400' : 'hover:bg-slate-700 text-slate-400'}`}
-            disabled={isChangingPeriod}
+            className={`px-2 py-1 rounded ${resolution === '7d' ? 'bg-emerald-500/20 text-emerald-400' : 'hover:bg-slate-700'}`}
           >
-            7d
+            7D
           </button>
           <button
             onClick={() => setResolution('30d')}
-            className={`px-2 py-1 rounded ${resolution === '30d' ? 'bg-emerald-500/20 text-emerald-400' : 'hover:bg-slate-700 text-slate-400'}`}
-            disabled={isChangingPeriod}
+            className={`px-2 py-1 rounded ${resolution === '30d' ? 'bg-emerald-500/20 text-emerald-400' : 'hover:bg-slate-700'}`}
           >
-            30d
+            30D
           </button>
+          
           {isChangingPeriod && (
-            <Loader2 className="h-4 w-4 text-emerald-500 animate-spin ml-2" />
+            <RefreshCw className="h-3 w-3 text-slate-400 animate-spin ml-2" />
           )}
         </div>
       </div>
       
-      {/* Summary stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {/* Total PNL */}
-        <div className="bg-slate-700/30 rounded-lg p-4 relative">
-          {isChangingPeriod && (
-            <div className="absolute inset-0 bg-slate-800/50 rounded-lg flex items-center justify-center z-10">
-              <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
-            </div>
-          )}
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-sm text-slate-400 mb-1">Total P&L</div>
-              <div className={`text-xl font-bold ${getValueColor(totalPnl)}`}>
-                {formatPNL(totalPnl)}
-              </div>
-              <div className="flex items-center text-xs mt-1">
-                <span className="text-slate-400 mr-2">Realized:</span>
-                <span className={getValueColor(summary.realizedPnlUsd || 0)}>
-                  {formatPNL(summary.realizedPnlUsd || 0)}
-                </span>
-              </div>
-            </div>
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${totalPnl > 0 ? 'bg-emerald-500/20' : totalPnl < 0 ? 'bg-red-500/20' : 'bg-slate-600/50'}`}>
-              {totalPnl > 0 ? (
-                <TrendingUp className="h-5 w-5 text-emerald-500" />
-              ) : totalPnl < 0 ? (
-                <TrendingDown className="h-5 w-5 text-red-500" />
-              ) : (
-                <DollarSign className="h-5 w-5 text-slate-400" />
-              )}
-            </div>
+      {/* Summary stats row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-slate-700/30 rounded-lg p-4">
+          <div className="flex items-center text-slate-400 mb-2 text-sm">
+            <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+            <span>Total P&L</span>
+          </div>
+          <div className={`text-xl font-semibold ${getValueColor(totalPnl)}`}>
+            {formatPNL(totalPnl)}
+          </div>
+          <div className="text-xs text-slate-400 mt-1">
+            Realized: {formatPNL(summary.realizedPnlUsd || 0)}
           </div>
         </div>
         
-        {/* Trading Volume */}
-        <div className="bg-slate-700/30 rounded-lg p-4 relative">
-          {isChangingPeriod && (
-            <div className="absolute inset-0 bg-slate-800/50 rounded-lg flex items-center justify-center z-10">
-              <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
-            </div>
-          )}
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-sm text-slate-400 mb-1">Trading Volume</div>
-              <div className="text-xl font-bold">{formatUSD(summary.tradesVolumeUsd || 0)}</div>
-              <div className="flex items-center text-xs mt-1 text-slate-400">
-                <Activity className="h-3 w-3 mr-1" />
-                <span>{summary.tradesCount || 0} trades</span>
-              </div>
-            </div>
-            <div className="bg-slate-600/50 w-10 h-10 rounded-lg flex items-center justify-center">
-              <Activity className="h-5 w-5 text-emerald-500" />
-            </div>
+        <div className="bg-slate-700/30 rounded-lg p-4">
+          <div className="flex items-center text-slate-400 mb-2 text-sm">
+            <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
+            <span>Win Rate</span>
+          </div>
+          <div className="text-xl font-semibold text-slate-100">
+            {summary.winRate ? summary.winRate.toFixed(1) : '0'}%
+          </div>
+          <div className="text-xs text-slate-400 mt-1">
+            {summary.winningTradesCount || 0}/{summary.tradesCount || 0} trades
           </div>
         </div>
         
-        {/* Win Rate */}
-        <div className="bg-slate-700/30 rounded-lg p-4 relative">
-          {isChangingPeriod && (
-            <div className="absolute inset-0 bg-slate-800/50 rounded-lg flex items-center justify-center z-10">
-              <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
-            </div>
-          )}
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-sm text-slate-400 mb-1">Win Rate</div>
-              <div className="text-xl font-bold">
-                {isNaN(summary.winRate) ? '0%' : summary.winRate.toFixed(1) + '%'}
+        <div className="bg-slate-700/30 rounded-lg p-4">
+          <div className="flex items-center text-slate-400 mb-2 text-sm">
+            <DollarSign className="h-3.5 w-3.5 mr-1.5" />
+            <span>Volume</span>
+          </div>
+          <div className="text-xl font-semibold text-slate-100">
+            {formatUSD(summary.tradesVolumeUsd || 0)}
+          </div>
+          <div className="text-xs text-slate-400 mt-1">
+            {summary.uniqueTokensTraded || 0} tokens traded
+          </div>
+        </div>
+        
+        <div className="bg-slate-700/30 rounded-lg p-4">
+          <div className="flex items-center text-slate-400 mb-2 text-sm">
+            <Activity className="h-3.5 w-3.5 mr-1.5" />
+            <span>Trades</span>
+          </div>
+          <div className="text-xl font-semibold text-slate-100">
+            {summary.tradesCount || 0}
+          </div>
+          <div className="text-xs text-slate-400 mt-1">
+            Avg: {formatUSD(summary.averageTradeUsd || 0)}
+          </div>
+        </div>
+      </div>
+      
+      {/* Token performance section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Best performing token */}
+        {summary.bestPerformingToken && (
+          <div className="bg-slate-700/30 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <div className="bg-emerald-500/20 w-7 h-7 rounded-full flex items-center justify-center mr-2">
+                  <ArrowUp className="h-3.5 w-3.5 text-emerald-500" />
+                </div>
+                <span className="text-sm text-slate-300">Best Performing</span>
               </div>
-              <div className="flex items-center text-xs mt-1 text-slate-400">
-                <span className="text-emerald-400 mr-1">{summary.winningTradesCount || 0} wins</span>
-                {summary.losingTradesCount > 0 && (
-                  <span className="text-red-400">{summary.losingTradesCount} losses</span>
+              <div className={`font-medium ${getValueColor(summary.bestPerformingToken.pnlUsd || 0)}`}>
+                {formatPNL(summary.bestPerformingToken.pnlUsd || 0)}
+              </div>
+            </div>
+            
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-slate-800 rounded-full mr-3 flex items-center justify-center overflow-hidden">
+                {getTokenImage(summary.bestPerformingToken) ? (
+                  <Image 
+                    src={getTokenImage(summary.bestPerformingToken) || ''} 
+                    alt={summary.bestPerformingToken.tokenSymbol} 
+                    width={32} 
+                    height={32}
+                    className="object-cover"
+                  />
+                ) : (
+                  <Coins className="h-4 w-4 text-slate-400" />
                 )}
               </div>
-            </div>
-            <div className="bg-slate-600/50 w-10 h-10 rounded-lg flex items-center justify-center">
-              <BarChart3 className="h-5 w-5 text-emerald-500" />
-            </div>
-          </div>
-        </div>
-        
-        {/* Avg Trade Size */}
-        <div className="bg-slate-700/30 rounded-lg p-4 relative">
-          {isChangingPeriod && (
-            <div className="absolute inset-0 bg-slate-800/50 rounded-lg flex items-center justify-center z-10">
-              <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
-            </div>
-          )}
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-sm text-slate-400 mb-1">Avg Trade Size</div>
-              <div className="text-xl font-bold">{formatUSD(summary.averageTradeUsd || 0)}</div>
-              <div className="flex items-center text-xs mt-1 text-slate-400">
-                <Coins className="h-3 w-3 mr-1" />
-                <span>{summary.uniqueTokensTraded || 0} tokens traded</span>
+              <div>
+                <div className="font-medium">{summary.bestPerformingToken.tokenSymbol}</div>
+                <div className="text-xs text-slate-400">{summary.bestPerformingToken.tokenName || summary.bestPerformingToken.tokenAddress}</div>
               </div>
             </div>
-            <div className="bg-slate-600/50 w-10 h-10 rounded-lg flex items-center justify-center">
-              <Landmark className="h-5 w-5 text-emerald-500" />
+          </div>
+        )}
+        
+        {/* Worst performing token */}
+        {summary.worstPerformingToken && (
+          <div className="bg-slate-700/30 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <div className="bg-red-500/20 w-7 h-7 rounded-full flex items-center justify-center mr-2">
+                  <ArrowDown className="h-3.5 w-3.5 text-red-500" />
+                </div>
+                <span className="text-sm text-slate-300">Worst Performing</span>
+              </div>
+              <div className={`font-medium ${getValueColor(summary.worstPerformingToken.pnlUsd || 0)}`}>
+                {formatPNL(summary.worstPerformingToken.pnlUsd || 0)}
+              </div>
+            </div>
+            
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-slate-800 rounded-full mr-3 flex items-center justify-center overflow-hidden">
+                {getTokenImage(summary.worstPerformingToken) ? (
+                  <Image 
+                    src={getTokenImage(summary.worstPerformingToken) || ''} 
+                    alt={summary.worstPerformingToken.tokenSymbol} 
+                    width={32} 
+                    height={32}
+                    className="object-cover"
+                  />
+                ) : (
+                  <Coins className="h-4 w-4 text-slate-400" />
+                )}
+              </div>
+              <div>
+                <div className="font-medium">{summary.worstPerformingToken.tokenSymbol}</div>
+                <div className="text-xs text-slate-400">{summary.worstPerformingToken.tokenName || summary.worstPerformingToken.tokenAddress}</div>
+              </div>
             </div>
           </div>
+        )}
+      </div>
+      
+      {/* Token metrics table */}
+      <div className="bg-slate-700/30 rounded-lg overflow-hidden mb-4">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[600px]">
+            <thead className="border-b border-slate-600/30">
+              <tr className="text-xs text-slate-400">
+                <th className="py-2 pl-4 text-left">Token</th>
+                <th className="py-2 text-right">Buy Volume</th>
+                <th className="py-2 text-right">Sell Volume</th>
+                <th className="py-2 pr-4 text-right">Net P&L</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedTokens.map((token, index) => {
+                const tokenPnl = (token.realizedPnlUsd || 0) + (token.unrealizedPnlUsd || 0);
+                
+                return (
+                  <tr key={token.tokenAddress ? token.tokenAddress : `token-${token.tokenSymbol || ''}-${index}`} className="border-b border-slate-600/20 hover:bg-slate-700/20">
+                    <td className="py-3 pl-4">
+                      <div className="flex items-center">
+                        <div className="w-7 h-7 bg-slate-800 rounded-full mr-2 flex items-center justify-center overflow-hidden">
+                          {getTokenImage(token) ? (
+                            <Image 
+                              src={getTokenImage(token) || ''} 
+                              alt={token.tokenSymbol || 'token'} 
+                              width={28} 
+                              height={28}
+                              className="object-cover"
+                            />
+                          ) : (
+                            <Coins className="h-3.5 w-3.5 text-slate-400" />
+                          )}
+                        </div>
+                        <span className="font-medium">{token.tokenSymbol || 'Unknown'}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 text-right">
+                      <div className="flex flex-col items-end">
+                        <div className="text-sm font-medium">{formatUSD(token.buys.volumeUsd || 0)}</div>
+                        <div className="text-xs text-slate-400">{token.buys.transactionCount || 0} txns</div>
+                      </div>
+                    </td>
+                    <td className="py-3 text-right">
+                      <div className="flex flex-col items-end">
+                        <div className="text-sm font-medium">{formatUSD(token.sells.volumeUsd || 0)}</div>
+                        <div className="text-xs text-slate-400">{token.sells.transactionCount || 0} txns</div>
+                      </div>
+                    </td>
+                    <td className="py-3 pr-4 text-right">
+                      <div className={`font-medium ${getValueColor(tokenPnl)}`}>
+                        {formatPNL(tokenPnl)}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
       
-      {/* Best Performing Token */}
-      {summary.bestPerformingToken && (
-        <div className="bg-slate-700/30 rounded-lg p-4 mb-6 relative">
-          {isChangingPeriod && (
-            <div className="absolute inset-0 bg-slate-800/50 rounded-lg flex items-center justify-center z-10">
-              <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
+      {/* PNL chart */}
+      {summary.pnlTrendSevenDays && summary.pnlTrendSevenDays.length > 0 && summary.pnlTrendSevenDays.some((day: [number, number]) => Math.abs(day[1] || 0) > 0) ? (
+        <div className="bg-slate-700/30 rounded-xl border border-slate-700/50 p-5 mb-4">
+          <div className="flex items-center mb-4">
+            <div className="bg-slate-700/50 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+              <Landmark className="h-4 w-4 text-emerald-500" />
             </div>
-          )}
-          <div className="text-sm text-slate-400 mb-3">Best Performing Token</div>
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-slate-800 rounded-full mr-3 flex items-center justify-center overflow-hidden">
-              {getTokenImage(summary.bestPerformingToken) ? (
-                <Image 
-                  src={getTokenImage(summary.bestPerformingToken) || ''} 
-                  alt={summary.bestPerformingToken.tokenSymbol} 
-                  width={40} 
-                  height={40}
-                  className="object-cover"
-                />
-              ) : (
-                <Coins className="h-5 w-5 text-slate-400" />
-              )}
-            </div>
-            <div className="flex-grow">
-              <div className="font-medium">{summary.bestPerformingToken.tokenSymbol}</div>
-              <div className="text-sm text-slate-400">{summary.bestPerformingToken.tokenName || ''}</div>
-            </div>
-            <div className="text-right">
-              <div className={`font-medium ${getValueColor(summary.bestPerformingToken.pnlUsd)}`}>
-                {formatPNL(summary.bestPerformingToken.pnlUsd)}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Token Metrics Table */}
-      {sortedTokens.length > 0 && (
-        <div className="bg-slate-700/30 rounded-lg p-4 relative">
-          {isChangingPeriod && (
-            <div className="absolute inset-0 bg-slate-800/50 rounded-lg flex items-center justify-center z-10">
-              <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
-            </div>
-          )}
-          <div className="flex justify-between items-center mb-3">
-            <div className="text-sm text-slate-400">Token Performance</div>
-            <div className="text-xs text-slate-500">By trading volume</div>
+            <h2 className="text-base font-semibold">P&L Trend (7 days)</h2>
           </div>
           
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-xs text-slate-400 border-b border-slate-600/50">
-                  <th className="pb-2 font-medium">Token</th>
-                  <th className="pb-2 font-medium text-right">Buys</th>
-                  <th className="pb-2 font-medium text-right">Sells</th>
-                  <th className="pb-2 font-medium text-right">Net P&L</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedTokens.map((token, index) => {
-                  const tokenPnl = (token.realizedPnlUsd || 0) + (token.unrealizedPnlUsd || 0);
+          <div className="h-40 flex items-end space-x-2 px-2 mt-6">
+            {summary.pnlTrendSevenDays.map((dayData: [number, number], index: number) => {
+              // Each dayData is an array [timestamp, pnlValue]
+              const timestamp = dayData[0] || 0;
+              const pnlValue = dayData[1] || 0;
+              
+              // Get day of week
+              const date = new Date(timestamp);
+              const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+              
+              // Scale bar height based on the relative PNL value
+              const maxPnlAbs = Math.max(...summary.pnlTrendSevenDays.map((d: [number, number]) => Math.abs(d[1] || 0)));
+              const heightPercentage = maxPnlAbs === 0 ? 0 : (Math.abs(pnlValue) / maxPnlAbs) * 100;
+              
+              // Ensure minimum visibility for non-zero values
+              const displayHeight = pnlValue === 0 ? 0 : Math.max(15, heightPercentage);
+              
+              // Format PNL for display
+              const formattedPNL = pnlValue.toFixed(2);
+              const displayPNL = parseFloat(formattedPNL);
+              
+              return (
+                <div key={`pnl-day-${timestamp || index}-${index}`} className="flex-1 flex flex-col items-center">
+                  {/* Value label */}
+                  <div className={`text-xs mb-2 font-medium ${Math.abs(pnlValue) > 0 ? (pnlValue > 0 ? 'text-emerald-500' : 'text-red-500') : 'text-slate-500'}`}>
+                    {pnlValue > 0 ? '+' : ''}{displayPNL}
+                  </div>
                   
-                  return (
-                    <tr key={token.tokenAddress} className="border-b border-slate-600/20 hover:bg-slate-700/20">
-                      <td className="py-3">
-                        <div className="flex items-center">
-                          <div className="w-7 h-7 bg-slate-800 rounded-full mr-2 flex items-center justify-center overflow-hidden">
-                            {getTokenImage({ tokenSymbol: token.tokenSymbol }) ? (
-                              <Image 
-                                src={getTokenImage({ tokenSymbol: token.tokenSymbol }) || ''} 
-                                alt={token.tokenSymbol} 
-                                width={28} 
-                                height={28}
-                                className="object-cover"
-                              />
-                            ) : (
-                              <Coins className="h-3.5 w-3.5 text-slate-400" />
-                            )}
-                          </div>
-                          <span className="font-medium">{token.tokenSymbol}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 text-right">
-                        <div className="flex flex-col items-end">
-                          <div className="text-sm font-medium">{formatUSD(token.buys.volumeUsd)}</div>
-                          <div className="text-xs text-slate-400">{token.buys.transactionCount} txns</div>
-                        </div>
-                      </td>
-                      <td className="py-3 text-right">
-                        <div className="flex flex-col items-end">
-                          <div className="text-sm font-medium">{formatUSD(token.sells.volumeUsd)}</div>
-                          <div className="text-xs text-slate-400">{token.sells.transactionCount} txns</div>
-                        </div>
-                      </td>
-                      <td className="py-3 text-right">
-                        <div className={`font-medium ${getValueColor(tokenPnl)}`}>
-                          {formatPNL(tokenPnl)}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  {/* Bar container with relative positioning */}
+                  <div className="w-full flex justify-center items-end h-[100px] relative">
+                    {/* Bar */}
+                    {Math.abs(pnlValue) > 0 && (
+                      <div 
+                        className={`w-8 rounded-t-md ${pnlValue >= 0 ? 'bg-emerald-500/90' : 'bg-red-500/90'}`}
+                        style={{ height: `${displayHeight}%` }}
+                      ></div>
+                    )}
+                    {Math.abs(pnlValue) === 0 && (
+                      <div className="w-8 h-[1px] bg-slate-600"></div>
+                    )}
+                  </div>
+                  
+                  {/* Day label */}
+                  <div className="text-xs mt-3 text-slate-400 font-medium">{dayOfWeek}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      )}
-      
-      <div className="mt-4 text-xs text-right text-slate-500 flex items-center justify-end">
-        <span className="mr-1">Data source: Vybe Network</span>
-        <button 
-          onClick={() => setIsLoading(true)} 
-          className="text-slate-400 hover:text-emerald-400 ml-2"
-          title="Refresh data"
-        >
-          <RefreshCw className="h-3 w-3" />
-        </button>
-      </div>
+      ) : null}
     </div>
   );
 }

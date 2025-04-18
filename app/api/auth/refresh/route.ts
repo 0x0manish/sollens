@@ -1,26 +1,25 @@
 import { NextResponse } from 'next/server';
-import { getSession, updateSession } from '@civic/auth-web3/nextjs';
+import { getUser } from '@civic/auth-web3/nextjs';
 
 export async function GET(request: Request) {
   try {
-    // Get the current session
-    const session = await getSession();
+    // Get the current user
+    const user = await getUser();
     
-    // If no active session, return a 401 Unauthorized
-    if (!session) {
+    // If no active user session, return a 401 Unauthorized
+    if (!user) {
       return NextResponse.json(
         { error: 'No active session' },
         { status: 401 }
       );
     }
     
-    // If session exists but approaching expiry, you would refresh the token here
-    // For now, we'll just return the existing session data
-    
+    // If session exists, return success
+    // The mere fact that getUser() returned a user object means the session is valid
     return NextResponse.json({ 
       status: 'success',
       message: 'Session validated',
-      expiresAt: session.expiresAt
+      userId: user.id
     });
   } catch (error) {
     console.error('Auth refresh error:', error);
