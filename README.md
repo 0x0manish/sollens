@@ -1,8 +1,10 @@
 # Sollens - Solana Token Analysis Platform
 
-![Sollens](https://placehold.co/600x200/1e293b/22c55e?text=Sollens&font=montserrat)
+<div align="center">
+  <img src="https://placehold.co/600x200/1e293b/22c55e?text=Sollens&font=montserrat" alt="Sollens" width="600" />
+</div>
 
-Sollens is a comprehensive analysis and verification platform for Solana tokens and wallets. It helps users check token authenticity, review metrics, track wallet performance, and make informed decisions in seconds.
+Sollens is a comprehensive analysis and verification platform for Solana tokens, wallets and transactions. It helps users check token authenticity, review metrics, track wallet performance, and make informed decisions in seconds.
 
 ## Features
 
@@ -17,10 +19,20 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens 
 
 ### Wallet Analysis
 - **Risk Assessment**: Evaluate wallet risk factors and detect sanctioned addresses
+- **Sanctioned Wallet Detection**: Identify high-risk wallets using Webacy API integration
+- **Visual Risk Indicators**: Clear green shields for safe wallets and red alerts for sanctioned addresses
 - **Trading Performance**: Track wallet profit and loss (PNL) across different time periods
 - **Token Holdings**: View all tokens held by a wallet with current values
 - **Transaction History**: Analyze recent transactions with detailed breakdowns
-- **Security Indicators**: Clear visual indicators for potential security concerns
+- **Data Freshness Indicator**: Transparent indication of data sourcing and refresh frequency
+
+### Transaction Visualization
+- **Interactive Flow Diagrams**: Visualize transaction flows between wallets with intuitive SVG-based diagrams
+- **Time-based Filtering**: Filter transaction flows by date ranges to focus on specific periods
+- **Amount Filtering**: Set minimum transaction amounts to focus on significant transfers
+- **Interactive Zooming & Panning**: Manipulate the view with intuitive zoom and pan controls
+- **Path Highlighting**: Highlight specific transaction paths for better analysis
+- **Fullscreen Mode**: Expand visualization for detailed examination of complex transaction networks
 
 ### Market Insights
 - **Solana DEX Metrics**: Real-time volume, trades, and market data from top Solana DEXes
@@ -29,10 +41,12 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens 
 
 ### User Experience
 - **Universal Search**: Easily search for any Solana token or wallet address
-- **Recent History**: Keep track of recently analyzed addresses
+- **Activity Tracking**: Keep track of recently analyzed tokens, wallets, and transactions
 - **Detailed Reports**: Get comprehensive analysis with actionable insights
 - **Modern UI**: Clean, intuitive interface with clear data visualization
 - **Wallet Integration**: Seamless Solana wallet connection using Civic Auth and web3
+- **Improved Authentication**: Robust login flow with reliable state transitions and profile image handling
+- **Consistent Dark Theme**: Smooth transitions between pages with no white flashes
 
 ## Technology Stack
 
@@ -44,11 +58,17 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens 
 - **React Hook Form**: Form validation library
 
 ### Authentication
-- **Civic Auth**: Web3 authentication service
-
+- **Civic Auth**: Web3 authentication service with enhanced reliability
+- **GlobalLoadingProvider**: Custom provider for seamless authentication transitions
 
 ### Blockchain Integration
 - **@solana/web3.js**: Library for interacting with the Solana blockchain
+- **date-fns**: Date manipulation for transaction time filtering
+
+### Data Visualization
+- **SVG-based Rendering**: Custom interactive transaction flow visualization
+- **Dynamic Layouts**: Circular and force-directed layouts for node positioning
+- **Interactive Elements**: Zoom, pan, and highlight capabilities in flow diagrams
 
 ### Data Sources
 - **Helius RPC**: High-performance Solana RPC node provider 
@@ -59,6 +79,32 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens 
 - **Messari**: Market metrics, DEX statistics, and network mindshare data
 - **Vybe Network**: Wallet trading performance and PNL tracking
 - **Solscan**: Blockchain explorer integration for transaction and account data
+
+## Deployment
+
+Sollens can be deployed to various hosting platforms. The recommended approach is to use Vercel or Netlify for optimal Next.js support.
+
+### Deploying to Vercel
+1. Connect your repository to Vercel
+2. Set up the required environment variables
+3. Deploy with the Next.js preset
+
+### Environment Variables
+The following environment variables are required for full functionality:
+
+```
+# Authentication
+CIVIC_CLIENT_ID=your_civic_client_id
+
+# Solana Configuration
+NEXT_PUBLIC_SOLANA_RPC_ENDPOINT=your_solana_rpc_endpoint
+NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
+
+# API Keys
+WEBACY_API_KEY=your_webacy_api_key
+MESSARI_API_KEY=your_messari_api_key
+VYBE_API_KEY=your_vybe_api_key
+```
 
 ## Getting Started
 
@@ -105,22 +151,60 @@ pnpm dev
 ## Key Components
 
 - **TokenAnalysis**: Core component for displaying token analysis
-- **TokenSearchForm**: Search functionality for token addresses
+- **WalletAnalysis**: Analysis of wallet activities, holdings, and risk assessment
+- **TransactionFlowVisualization**: Interactive visualization of transaction flows
+- **GlobalLoadingProvider**: Ensures smooth transitions between authentication states
+- **TokenSearchForm**: Universal search functionality for token/wallet addresses
 - **DecentralizationAnalysis**: Analysis of token holder distribution
 - **TokenHolders**: Displays token holder information
 - **TokenOverview**: Shows general token information
 
-## Usage Flow
+## Application Flow
 
-1. Connect your Solana wallet using Civic authentication
-2. Enter a Solana token address in the search bar
-3. View the comprehensive analysis including:
-   - Security score
-   - Liquidity analysis
-   - Holder distribution
-   - Exchange listings
-   - Token metrics
-4. Use the insights to make informed decisions about the token
+1. **Authentication Flow**
+   - User authenticates using Civic Auth
+   - System verifies authentication state
+   - Profile data loads with reliable image handling
+   - Smooth transition to dashboard with no white flash
+
+2. **Token Analysis Flow**
+   - User searches for a token address
+   - Address validation and classification occurs
+   - Token data is fetched from multiple APIs
+   - Security score and analysis are displayed
+   - User can interact with detailed metrics
+
+3. **Wallet Analysis Flow**
+   - User searches for a wallet address
+   - Wallet data including balance and holdings are retrieved
+   - Sanctioned status is checked via Webacy API
+   - Visual indicators show wallet risk level
+   - Token holdings and transaction history are displayed
+
+4. **Transaction Analysis Flow**
+   - User searches for a transaction signature
+   - Transaction details are fetched and decoded
+   - Interactive flow visualization shows transaction context
+   - User can filter by time and amount
+   - Transaction can be explored with zoom and pan controls
+
+## Recent Enhancements
+
+### Webacy API Integration for Sanctioned Wallet Detection
+Added integration with Webacy's API to detect sanctioned wallet addresses, providing users with critical compliance and security information before interacting with potentially high-risk wallets.
+
+### Improved Authentication Flow
+Enhanced the user authentication experience with:
+- Robust profile image loading with validation and fallbacks
+- Loading states to ensure data is fully loaded before UI rendering
+- Improved logout process with proper authentication state clearing
+- Consistent dark theme to prevent white flashes during page transitions
+
+### Wallet Analysis Enhancements
+- Added clear visual indicators for sanctioned status (green shield for safe, red alert for sanctioned)
+- Implemented transparent data sourcing disclaimer
+- Improved data display with actual values from API responses
+- Enhanced error handling for wallet data
 
 ## Contributing
 
