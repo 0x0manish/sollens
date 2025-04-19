@@ -35,6 +35,7 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **Fullscreen Mode**: Expand visualization for detailed examination of complex transaction networks
 
 ### Market Insights
+- **Solana Blockchain Data**: Real-time metrics including block height, epoch, slot, and transaction count from Solscan API
 - **Solana DEX Metrics**: Real-time volume, trades, and market data from top Solana DEXes
 - **Network Mindshare**: Track Solana's prominence in crypto conversations and sentiment
 - **Social Sentiment**: Analyze positive/negative sentiment across social platforms
@@ -80,7 +81,7 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **DexScreener**: DEX data, token pairs, and market analytics
 - **Messari**: Market metrics, DEX statistics, and network mindshare data
 - **Vybe Network**: Wallet trading performance and PNL tracking
-- **Solscan**: Blockchain explorer integration for transaction and account data
+- **Solscan**: Blockchain explorer, real-time network statistics, and chain information API
 
 ## Deployment
 
@@ -106,6 +107,7 @@ NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
 WEBACY_API_KEY=your_webacy_api_key
 MESSARI_API_KEY=your_messari_api_key
 VYBE_API_KEY=your_vybe_api_key
+SOLSCAN_API_TOKEN=your_solscan_api_token
 ```
 
 ## Getting Started
@@ -141,6 +143,7 @@ NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
 WEBACY_API_KEY=your_webacy_api_key
 MESSARI_API_KEY=your_messari_api_key
 VYBE_API_KEY=your_vybe_api_key
+SOLSCAN_API_TOKEN=your_solscan_api_token
 ```
 
 4. Run the development server

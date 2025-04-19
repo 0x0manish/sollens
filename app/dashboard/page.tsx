@@ -7,6 +7,7 @@ import { RecentActivity } from "@/components/RecentActivity"
 import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
 import { SolanaDexMetrics } from "@/components/SolanaDexMetrics"
 import { SolanaMindshare } from "@/components/SolanaMindshare"
+import { SolanaChainInfo } from "@/components/SolanaChainInfo"
 import { DashboardHeader } from "@/components/DashboardHeader"
 
 export default async function DashboardPage() {
@@ -44,6 +45,11 @@ export default async function DashboardPage() {
               <RecentActivity />
             </div>
           </div>
+        </div>
+        
+        {/* Solana Chain Info */}
+        <div className="mb-12">
+          <SolanaChainInfo />
         </div>
         
         {/* Solana Mindshare */}
