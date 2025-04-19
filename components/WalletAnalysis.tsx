@@ -272,6 +272,13 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
             </div>
           </div>
         </div>
+        
+        {/* Data freshness disclaimer */}
+        <div className="mt-4 flex items-center text-xs text-slate-400 border-t border-slate-700 pt-3">
+          <span className="text-emerald-500 mr-1">★</span>
+          <Info className="h-3 w-3 text-slate-500 mr-1.5" />
+          <span>Analysis includes data from multiple external APIs. Some information may not reflect real-time blockchain state.</span>
+        </div>
       </div>
       
       {/* Stats Grid */}
