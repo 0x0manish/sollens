@@ -14,7 +14,7 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **Liquidity Analysis**: Verify liquidity depth and distribution across different exchanges
 - **Holder Distribution**: Examine token distribution to identify concentration risks
 - **Scam Detection**: Identify common scam patterns and suspicious token behaviors
-- **On-Chain Activity**: Track real-time transactions and trading patterns
+- **On-Chain Activity**: Track near real-time transactions and trading patterns
 
 
 ### Wallet Analysis
@@ -212,4 +212,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](./LICENSE) - see the [LICENSE](./LICENSE) file for details.
