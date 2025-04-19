@@ -22,7 +22,8 @@ import {
   ShieldAlert,
   ShieldCheck,
   Globe,
-  ChevronDown
+  ChevronDown,
+  Share2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -31,6 +32,8 @@ import { formatUSD } from '@/lib/utils';
 import { WalletAnalysisLoading } from "@/components/WalletAnalysisLoading";
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { WalletPNL } from "@/components/WalletPNL";
+import Link from 'next/link';
+import { toast } from 'sonner';
 
 interface WalletAnalysisProps {
   walletAddress: string;
@@ -154,10 +157,18 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
   }, [walletAddress]);
 
   // Helper function to shorten an address for display
-  function shortenAddress(address: string, chars: number = 4): string {
-    if (!address) return '';
-    return `${address.substring(0, chars)}...${address.substring(address.length - chars)}`;
-  }
+  const shortenAddress = (address: string, chars = 4) => {
+    return address ? `${address.slice(0, chars)}...${address.slice(-chars)}` : '';
+  };
+
+  // Handler to copy text to clipboard with feedback
+  const copyToClipboard = (text: string, label: string = 'Transaction signature') => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success(`${label} copied to clipboard`);
+    }).catch(() => {
+      toast.error('Failed to copy to clipboard');
+    });
+  };
 
   // Format date function
   function formatDate(dateString: string): string {
@@ -237,7 +248,7 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
               <span className="font-mono text-sm text-slate-400">{shortenAddress(walletAddress)}</span>
               <button 
                 className="text-slate-500 hover:text-slate-300 transition"
-                onClick={() => navigator.clipboard.writeText(walletAddress)}
+                onClick={() => copyToClipboard(walletAddress, 'Wallet address')}
               >
                 <Copy className="h-4 w-4" />
               </button>
@@ -410,10 +421,19 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
       
       {/* Recent Transactions */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-        <h2 className="text-lg font-semibold mb-4 flex items-center">
-          <Activity className="h-5 w-5 mr-2 text-emerald-500" />
-          Recent Transactions
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold flex items-center">
+            <Activity className="h-5 w-5 mr-2 text-emerald-500" />
+            Recent Transactions
+          </h2>
+          
+          <Button asChild variant="outline" className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600">
+            <Link href={`/dashboard/wallet/flow?address=${walletAddress}`}>
+              <Share2 className="h-4 w-4 mr-2" />
+              View Flow Visualization
+            </Link>
+          </Button>
+        </div>
         
         {transactionsLoading ? (
           <div className="space-y-3">
@@ -449,8 +469,18 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
                     </div>
                     <div className="ml-3">
                       <div className="font-medium">{tx.type || 'Transaction'}</div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-slate-400 flex items-center">
                         <span className="font-mono">{shortenAddress(tx.signature, 8)}</span>
+                        <button 
+                          className="text-slate-500 hover:text-slate-300 transition ml-1.5 flex items-center"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyToClipboard(tx.signature);
+                          }}
+                          title="Copy transaction signature"
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </div>
                   </div>

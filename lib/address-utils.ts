@@ -21,6 +21,38 @@ export function isEthereumAddress(address: string): boolean {
 }
 
 /**
+ * Checks if a string is likely a Solana transaction signature
+ * Solana transaction signatures are Base58-encoded strings, typically 88 characters long
+ */
+export function isTransactionSignature(signature: string): boolean {
+  // Solana transaction signatures are Base58-encoded strings
+  // They are typically 88 characters long
+  const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{88,}$/;
+  return base58Regex.test(signature);
+}
+
+/**
+ * Validates a transaction signature against the blockchain
+ */
+export async function validateTransactionSignature(signature: string, connection: Connection): Promise<boolean> {
+  try {
+    if (!isTransactionSignature(signature)) {
+      return false;
+    }
+    
+    // Check if transaction exists on-chain
+    const transaction = await connection.getParsedTransaction(signature, {
+      maxSupportedTransactionVersion: 0
+    });
+    
+    return transaction !== null;
+  } catch (error) {
+    console.error("Error validating transaction signature:", error);
+    return false;
+  }
+}
+
+/**
  * A safer approach to check if an account is a token mint
  * First checks account info before trying getTokenLargestAccounts
  */
@@ -74,11 +106,11 @@ export async function isTokenAddress(address: string, connection: Connection): P
  * Analyzes address and determines its type
  * @param address Address to analyze
  * @param connection Solana RPC connection
- * @returns Promise<{ isValid: boolean, type: 'token' | 'wallet' | 'invalid', error?: string }>
+ * @returns Promise<{ isValid: boolean, type: 'token' | 'wallet' | 'transaction' | 'invalid', error?: string }>
  */
 export async function analyzeAddress(address: string, connection: Connection): Promise<{
   isValid: boolean;
-  type: 'token' | 'wallet' | 'invalid';
+  type: 'token' | 'wallet' | 'transaction' | 'invalid';
   error?: string;
 }> {
   try {
@@ -98,6 +130,25 @@ export async function analyzeAddress(address: string, connection: Connection): P
         type: 'invalid',
         error: 'Ethereum addresses are not supported. Please enter a Solana address.'
       };
+    }
+    
+    // Check if it's a transaction signature format
+    if (isTransactionSignature(address)) {
+      // Validate the transaction exists on-chain
+      const isValid = await validateTransactionSignature(address, connection);
+      
+      if (isValid) {
+        return {
+          isValid: true,
+          type: 'transaction'
+        };
+      } else {
+        return {
+          isValid: false,
+          type: 'invalid',
+          error: 'Transaction signature not found on-chain'
+        };
+      }
     }
     
     // Check if it's a valid Solana address

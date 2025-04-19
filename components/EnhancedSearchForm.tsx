@@ -17,7 +17,9 @@ export function EnhancedSearchForm() {
   
   // Reset state on component mount and URL changes
   useEffect(() => {
-    const currentAddress = searchParams.get('address') || searchParams.get('tokenAddress');
+    const currentAddress = searchParams.get('address') || 
+                         searchParams.get('tokenAddress') || 
+                         searchParams.get('signature');
     if (currentAddress) {
       setAddress(currentAddress);
     }
@@ -30,7 +32,7 @@ export function EnhancedSearchForm() {
     const trimmedAddress = address.trim();
     
     if (!trimmedAddress) {
-      setError("Please enter a Solana address");
+      setError("Please enter a Solana address or transaction signature");
       return;
     }
     
@@ -51,7 +53,7 @@ export function EnhancedSearchForm() {
         const analysis = await analyzeAddress(trimmedAddress, connection);
         
         if (!analysis.isValid) {
-          setError(analysis.error || "Invalid address");
+          setError(analysis.error || "Invalid address or signature");
           setIsProcessing(false);
           return;
         }
@@ -59,6 +61,8 @@ export function EnhancedSearchForm() {
         // Redirect based on detected address type
         if (analysis.type === 'token') {
           router.push(`/dashboard/analysis?tokenAddress=${trimmedAddress}`);
+        } else if (analysis.type === 'transaction') {
+          router.push(`/dashboard/transaction?signature=${trimmedAddress}`);
         } else {
           const currentUrl = window.location.pathname + window.location.search;
           const targetUrl = `/dashboard/wallet?address=${trimmedAddress}`;
@@ -103,7 +107,7 @@ export function EnhancedSearchForm() {
               setError(null);
             }}
             autoComplete="off"
-            placeholder="Enter Solana token or wallet address"
+            placeholder="Enter Solana token, wallet address, or transaction signature"
             className="bg-slate-700 rounded-lg px-4 py-3 w-full text-white outline-none border border-slate-600 focus:border-emerald-500 transition-colors"
           />
           <Button 
