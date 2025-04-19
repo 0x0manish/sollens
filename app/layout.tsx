@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { CivicAuthProvider } from "@civic/auth-web3/nextjs"
+import { GlobalLoadingProvider } from '@/components/GlobalLoadingProvider'
 
 export const metadata: Metadata = {
   title: 'Sollens - Verify Solana Tokens',
@@ -30,11 +31,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <CivicAuthProvider>
-          {children}
-        </CivicAuthProvider>
+    <html lang="en" className="bg-slate-900">
+      <body className="bg-slate-900 text-white min-h-screen">
+        <GlobalLoadingProvider>
+          <CivicAuthProvider>
+            {children}
+          </CivicAuthProvider>
+        </GlobalLoadingProvider>
       </body>
     </html>
   )
