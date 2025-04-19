@@ -15,7 +15,8 @@ import {
   Landmark,
   Coins,
   RefreshCw,
-  Copy
+  Copy,
+  ChevronDown
 } from 'lucide-react';
 import { formatUSD, formatNumber } from '@/lib/utils';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,6 +35,9 @@ export function WalletPNL({ walletAddress }: WalletPNLProps) {
   const [isChangingPeriod, setIsChangingPeriod] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resolution, setResolution] = useState<ResolutionType>('7d');
+  
+  // Add state to control token list display
+  const [showAllTokens, setShowAllTokens] = useState(false);
 
   useEffect(() => {
     async function fetchPNLData() {
@@ -405,7 +409,7 @@ export function WalletPNL({ walletAddress }: WalletPNLProps) {
               </tr>
             </thead>
             <tbody>
-              {sortedTokens.map((token, index) => {
+              {sortedTokens.slice(0, showAllTokens ? sortedTokens.length : 5).map((token, index) => {
                 const tokenPnl = (token.realizedPnlUsd || 0) + (token.unrealizedPnlUsd || 0);
                 
                 return (
@@ -476,6 +480,19 @@ export function WalletPNL({ walletAddress }: WalletPNLProps) {
           </table>
         </div>
       </div>
+      
+      {/* Show complete list button */}
+      {sortedTokens.length > 5 && !showAllTokens && (
+        <div className="text-center mb-6">
+          <button 
+            onClick={() => setShowAllTokens(true)}
+            className="inline-flex items-center px-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm font-medium text-white hover:bg-slate-600 transition-colors"
+          >
+            <ChevronDown className="h-4 w-4 mr-2" />
+            Show complete list ({sortedTokens.length} tokens)
+          </button>
+        </div>
+      )}
       
       {/* PNL chart */}
       {summary.pnlTrendSevenDays && summary.pnlTrendSevenDays.length > 0 && summary.pnlTrendSevenDays.some((day: [number, number]) => Math.abs(day[1] || 0) > 0) ? (

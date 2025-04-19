@@ -55,6 +55,8 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
   const [sanctionedData, setSanctionedData] = useState<{ is_sanctioned: boolean } | null>(null);
   const [sanctionedLoading, setSanctionedLoading] = useState(true);
   const [sanctionedError, setSanctionedError] = useState<string | null>(null);
+  
+  const [showAllTokens, setShowAllTokens] = useState(false);
 
   useEffect(() => {
     async function fetchWalletData() {
@@ -552,7 +554,7 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
           </div>
         ) : tokensData.length > 0 ? (
           <div className="space-y-3">
-            {tokensData.map((token, index) => (
+            {tokensData.slice(0, showAllTokens ? tokensData.length : 5).map((token, index) => (
               <div key={index} className="bg-slate-700/30 rounded-lg p-4 hover:bg-slate-700/50 transition">
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center">
@@ -584,6 +586,20 @@ export function WalletAnalysis({ walletAddress }: WalletAnalysisProps) {
                 </div>
               </div>
             ))}
+            
+            {/* Show complete list button */}
+            {tokensData.length > 5 && !showAllTokens && (
+              <div className="mt-4 text-center">
+                <Button 
+                  variant="outline" 
+                  className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+                  onClick={() => setShowAllTokens(true)}
+                >
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Show complete list ({tokensData.length} tokens)
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-slate-700/30 rounded-lg p-6 text-center">
