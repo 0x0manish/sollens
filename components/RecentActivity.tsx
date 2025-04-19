@@ -298,8 +298,8 @@ export function RecentActivity() {
       
       <div className="flex justify-between items-center pt-2">
         <Button 
-          variant="outline" 
-          className="border-emerald-500 border text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300"
+          variant="default" 
+          className="bg-emerald-800 border-none text-emerald-300 hover:bg-emerald-700 hover:text-emerald-200 transition-colors"
           asChild
         >
           <Link href="/dashboard/history">View All Activity</Link>
