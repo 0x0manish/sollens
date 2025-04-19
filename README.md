@@ -83,33 +83,6 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **Vybe Network**: Wallet trading performance and PNL tracking
 - **Solscan**: Blockchain explorer, real-time network statistics, and chain information API
 
-## Deployment
-
-Sollens can be deployed to various hosting platforms. The recommended approach is to use Vercel or Netlify for optimal Next.js support.
-
-### Deploying to Vercel
-1. Connect your repository to Vercel
-2. Set up the required environment variables
-3. Deploy with the Next.js preset
-
-### Environment Variables
-The following environment variables are required for full functionality:
-
-```
-# Authentication
-CIVIC_CLIENT_ID=your_civic_client_id
-
-# Solana Configuration
-NEXT_PUBLIC_SOLANA_RPC_ENDPOINT=your_solana_rpc_endpoint
-NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
-
-# API Keys
-WEBACY_API_KEY=your_webacy_api_key
-MESSARI_API_KEY=your_messari_api_key
-VYBE_API_KEY=your_vybe_api_key
-SOLSCAN_API_TOKEN=your_solscan_api_token
-```
-
 ## Getting Started
 
 ### Prerequisites
@@ -152,6 +125,33 @@ pnpm dev
 ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application
+
+## Deployment
+
+Sollens can be deployed to various hosting platforms. The recommended approach is to use Vercel or Netlify for optimal Next.js support.
+
+### Deploying to Vercel
+1. Connect your repository to Vercel
+2. Set up the required environment variables
+3. Deploy with the Next.js preset
+
+### Environment Variables
+The following environment variables are required for full functionality:
+
+```
+# Authentication
+CIVIC_CLIENT_ID=your_civic_client_id
+
+# Solana Configuration
+NEXT_PUBLIC_SOLANA_RPC_ENDPOINT=your_solana_rpc_endpoint
+NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
+
+# API Keys
+WEBACY_API_KEY=your_webacy_api_key
+MESSARI_API_KEY=your_messari_api_key
+VYBE_API_KEY=your_vybe_api_key
+SOLSCAN_API_TOKEN=your_solscan_api_token
+```
 
 ## Key Components
 
