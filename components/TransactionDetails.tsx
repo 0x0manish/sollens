@@ -2,31 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { 
-  FileText, 
-  Check, 
   Clock, 
-  ArrowRight, 
   Copy, 
   ExternalLink, 
   CheckCircle, 
   XCircle, 
   AlertTriangle,
-  Code,
   Terminal,
-  Coins,
   CircleDollarSign,
   Server,
-  Loader2,
   Inbox,
   Share2,
   ListTree
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Link from "next/link";
 import toast from 'react-hot-toast';
+import { TransactionAnalysisLoading } from "@/components/TransactionAnalysisLoading";
 
 interface TransactionDetailsProps {
   signature: string;
@@ -99,28 +93,7 @@ export function TransactionDetails({ signature }: TransactionDetailsProps) {
   };
 
   if (loading) {
-    return (
-      <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center">
-            <Skeleton className="h-10 w-10 rounded-full bg-slate-700 mr-3" />
-            <div>
-              <Skeleton className="h-6 w-60 bg-slate-700 mb-2" />
-              <Skeleton className="h-4 w-40 bg-slate-700" />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <Skeleton className="h-20 bg-slate-700 rounded-lg" />
-          <Skeleton className="h-20 bg-slate-700 rounded-lg" />
-          <Skeleton className="h-20 bg-slate-700 rounded-lg" />
-        </div>
-
-        <Skeleton className="h-40 bg-slate-700 rounded-lg mb-6" />
-        <Skeleton className="h-60 bg-slate-700 rounded-lg" />
-      </div>
-    );
+    return <TransactionAnalysisLoading />;
   }
 
   if (error) {
