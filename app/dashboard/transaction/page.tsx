@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
 import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
 import { TransactionDetails } from "@/components/TransactionDetails"
+import { DashboardHeader } from "@/components/DashboardHeader"
 
 // Define types for the async params
 type PageProps = {
@@ -28,17 +29,8 @@ export default async function TransactionDetailsPage({ params, searchParams }: P
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-      {/* Header */}
-      <header className="container mx-auto py-6 px-4 flex justify-between items-center border-b border-slate-800">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="bg-emerald-500 p-2 rounded-lg">
-            <Search className="h-5 w-5 text-slate-900" />
-          </div>
-          <h1 className="text-xl font-bold">Sollens</h1>
-        </Link>
-        
-        <UserProfile />
-      </header>
+      {/* Header with Back to Dashboard button */}
+      <DashboardHeader showBackButton={true} />
 
       {/* Dashboard Content */}
       <main className="container mx-auto px-4 py-10 flex-grow">
