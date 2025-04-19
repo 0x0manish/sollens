@@ -69,7 +69,22 @@ export function EnhancedSearchForm() {
             signature: trimmedAddress,
             timestamp: Date.now()
           });
-          router.push(`/dashboard/transaction?signature=${trimmedAddress}`);
+          
+          const currentUrl = window.location.pathname + window.location.search;
+          const targetUrl = `/dashboard/transaction?signature=${trimmedAddress}`;
+          
+          // If we're already on the same URL, force a refresh
+          if (currentUrl === targetUrl) {
+            // Add a timestamp to force refresh
+            router.refresh();
+            
+            // Reset loading state after a short delay
+            setTimeout(() => {
+              setIsProcessing(false);
+            }, 1000);
+          } else {
+            router.push(targetUrl);
+          }
         } else {
           // Save wallet to history
           saveToSearchHistory('recentWallets', {
