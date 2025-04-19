@@ -58,12 +58,26 @@ export function EnhancedSearchForm() {
           return;
         }
         
-        // Redirect based on detected address type
+        // Save search to history based on type
         if (analysis.type === 'token') {
+          // Token searches are already saved elsewhere in the codebase
           router.push(`/dashboard/analysis?tokenAddress=${trimmedAddress}`);
         } else if (analysis.type === 'transaction') {
+          // Save transaction to history
+          saveToSearchHistory('recentTransactions', {
+            type: 'transaction',
+            signature: trimmedAddress,
+            timestamp: Date.now()
+          });
           router.push(`/dashboard/transaction?signature=${trimmedAddress}`);
         } else {
+          // Save wallet to history
+          saveToSearchHistory('recentWallets', {
+            type: 'wallet',
+            address: trimmedAddress,
+            timestamp: Date.now()
+          });
+          
           const currentUrl = window.location.pathname + window.location.search;
           const targetUrl = `/dashboard/wallet?address=${trimmedAddress}`;
           
@@ -91,6 +105,51 @@ export function EnhancedSearchForm() {
       console.error("Address analysis error:", error);
       setError(error instanceof Error ? error.message : "Error analyzing address");
       setIsProcessing(false);
+    }
+  };
+  
+  // Helper function to save search history to localStorage
+  const saveToSearchHistory = (key: string, item: any) => {
+    try {
+      // Get existing history
+      const existingHistory = localStorage.getItem(key);
+      let history = existingHistory ? JSON.parse(existingHistory) : [];
+      
+      // Check if this item already exists (avoid duplicates)
+      const isDuplicate = history.some((historyItem: any) => 
+        (key === 'recentTransactions' && historyItem.signature === item.signature) ||
+        (key === 'recentWallets' && historyItem.address === item.address)
+      );
+      
+      if (!isDuplicate) {
+        // Add new item at the beginning
+        history = [item, ...history];
+        
+        // Limit history to 20 items
+        if (history.length > 20) {
+          history = history.slice(0, 20);
+        }
+        
+        // Save back to localStorage
+        localStorage.setItem(key, JSON.stringify(history));
+      } else {
+        // Update timestamp for existing item
+        history = history.map((historyItem: any) => {
+          if ((key === 'recentTransactions' && historyItem.signature === item.signature) ||
+              (key === 'recentWallets' && historyItem.address === item.address)) {
+            return {...historyItem, timestamp: Date.now()};
+          }
+          return historyItem;
+        });
+        
+        // Sort by timestamp again
+        history.sort((a: any, b: any) => b.timestamp - a.timestamp);
+        
+        // Save back to localStorage
+        localStorage.setItem(key, JSON.stringify(history));
+      }
+    } catch (error) {
+      console.error('Failed to save search history:', error);
     }
   };
 

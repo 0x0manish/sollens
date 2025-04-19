@@ -3,7 +3,7 @@ import { Search, History } from "lucide-react"
 import Link from "next/link"
 import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
-import { RecentTokens } from "@/components/RecentTokens"
+import { RecentActivity } from "@/components/RecentActivity"
 import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
 import { SolanaDexMetrics } from "@/components/SolanaDexMetrics"
 import { SolanaMindshare } from "@/components/SolanaMindshare"
@@ -49,7 +49,7 @@ export default async function DashboardPage() {
             </h3>
             
             <div className="space-y-4">
-              <RecentTokens />
+              <RecentActivity />
             </div>
           </div>
         </div>
