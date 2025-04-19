@@ -45,6 +45,8 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **Detailed Reports**: Get comprehensive analysis with actionable insights
 - **Modern UI**: Clean, intuitive interface with clear data visualization
 - **Wallet Integration**: Seamless Solana wallet connection using Civic Auth and web3
+- **Civic Web3 Wallet**: Built-in Solana wallet functionality with secure key management
+- **Wallet Funding & Withdrawal**: Deposit and withdraw SOL to your integrated Civic wallet
 - **Improved Authentication**: Robust login flow with reliable state transitions and profile image handling
 - **Consistent Dark Theme**: Smooth transitions between pages with no white flashes
 
@@ -195,6 +197,14 @@ Added integration with Webacy's API to detect sanctioned wallet addresses, provi
 
 ### RugCheck API Integration for Token Safety Verification
 Enhanced token analysis with comprehensive RugCheck API integration, enabling advanced scam detection, token verification, and risk assessment capabilities.
+
+### Civic Wallet Funding and Withdrawal
+Implemented complete wallet functionality allowing users to:
+- Create a Solana wallet through Civic authentication
+- View wallet balance in real-time
+- Deposit SOL to fund analysis activities
+- Withdraw SOL to external wallets with transaction confirmation
+- Track transaction history of deposits and withdrawals
 
 ### Improved Authentication Flow
 Enhanced the user authentication experience with:
