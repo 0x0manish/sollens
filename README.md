@@ -13,9 +13,9 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **DEX Verification**: Instantly verify if tokens are listed on trusted DEXs
 - **Liquidity Analysis**: Verify liquidity depth and distribution across different exchanges
 - **Holder Distribution**: Examine token distribution to identify concentration risks
-- **Scam Detection**: Identify common scam patterns and suspicious token behaviors
+- **Scam Detection**: Identify common scam patterns and suspicious token behaviors via RugCheck API
 - **On-Chain Activity**: Track near real-time transactions and trading patterns
-
+- **Token Safety Verification**: Comprehensive token risk assessment powered by RugCheck API
 
 ### Wallet Analysis
 - **Risk Assessment**: Evaluate wallet risk factors and detect sanctioned addresses
@@ -192,6 +192,9 @@ pnpm dev
 
 ### Webacy API Integration for Sanctioned Wallet Detection
 Added integration with Webacy's API to detect sanctioned wallet addresses, providing users with critical compliance and security information before interacting with potentially high-risk wallets.
+
+### RugCheck API Integration for Token Safety Verification
+Enhanced token analysis with comprehensive RugCheck API integration, enabling advanced scam detection, token verification, and risk assessment capabilities.
 
 ### Improved Authentication Flow
 Enhanced the user authentication experience with:
