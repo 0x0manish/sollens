@@ -22,12 +22,12 @@ export function isEthereumAddress(address: string): boolean {
 
 /**
  * Checks if a string is likely a Solana transaction signature
- * Solana transaction signatures are Base58-encoded strings, typically 88 characters long
+ * Solana transaction signatures are Base58-encoded strings
  */
 export function isTransactionSignature(signature: string): boolean {
   // Solana transaction signatures are Base58-encoded strings
-  // They are typically 88 characters long
-  const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{88,}$/;
+  // They are typically 87-88 characters long
+  const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{85,}$/;
   return base58Regex.test(signature);
 }
 
