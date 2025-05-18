@@ -9,15 +9,18 @@ export function formatUSD(value: number | undefined | null): string {
   if (value === undefined || value === null) {
     return '$--';
   }
-  
-  if (value >= 1_000_000) {
-    return `$${(value / 1_000_000).toFixed(2)}M`;
-  } else if (value >= 1_000) {
-    return `$${(value / 1_000).toFixed(2)}K`;
-  } else if (value < 0.01 && value > 0) {
-    return `$${value.toFixed(6)}`;
+
+  const sign = value < 0 ? '-' : '';
+  const absValue = Math.abs(value);
+
+  if (absValue >= 1_000_000) {
+    return `${sign}$${(absValue / 1_000_000).toFixed(2)}M`;
+  } else if (absValue >= 1_000) {
+    return `${sign}$${(absValue / 1_000).toFixed(2)}K`;
+  } else if (absValue < 0.01 && absValue > 0) {
+    return `${sign}$${absValue.toFixed(6)}`;
   } else {
-    return `$${value.toFixed(2)}`;
+    return `${sign}$${absValue.toFixed(2)}`;
   }
 }
 
