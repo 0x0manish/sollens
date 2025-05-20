@@ -15,7 +15,7 @@ export default function LandingPage() {
           <h1 className="text-xl font-bold">Sollens</h1>
         </div>
         <Button className="bg-emerald-500 hover:bg-emerald-600 text-white" asChild>
-          <Link href="/login">Launch App</Link>
+          <Link href="/dashboard">Launch App</Link>
         </Button>
       </header>
 
@@ -30,10 +30,10 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-6 text-lg" asChild>
-              <Link href="/login">Analyze Token</Link>
+              <Link href="/dashboard">Analyze Token</Link>
             </Button>
             <Button className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-6 text-lg" asChild>
-              <Link href="/login">Analyze Wallet</Link>
+              <Link href="/dashboard">Analyze Wallet</Link>
             </Button>
           </div>
         </div>

@@ -1,22 +1,13 @@
-import { UserButton } from "@civic/auth-web3/react"
-import { getUser } from "@civic/auth-web3/nextjs"
-import { Search, CircleUser } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { redirect } from "next/navigation"
+"use client";
 
-export default async function LoginPage() {
-  // Check if user is already authenticated
-  const user = await getUser()
-  
-  // If user is already logged in, redirect to dashboard
-  if (user) {
-    redirect('/dashboard')
-  }
-  
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { Search, CircleUser } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-      {/* Header */}
       <header className="container mx-auto py-6 px-4 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2">
           <div className="bg-emerald-500 p-2 rounded-lg">
@@ -26,7 +17,6 @@ export default async function LoginPage() {
         </Link>
       </header>
 
-      {/* Login Section */}
       <div className="container mx-auto px-4 py-20 flex-grow flex items-center justify-center">
         <div className="max-w-md w-full">
           <div className="relative">
@@ -36,32 +26,17 @@ export default async function LoginPage() {
                 <div className="mx-auto w-20 h-20 bg-slate-700 rounded-full flex items-center justify-center mb-4">
                   <CircleUser className="h-12 w-12 text-emerald-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Sign in to Sollens</h2>
-                <p className="text-slate-300">
-                  Your secure gateway to comprehensive Solana token analysis
-                </p>
+                <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
+                <p className="text-slate-300">Securely connect your Solana wallet.</p>
               </div>
-              
-              <div className="space-y-6">
-                <div className="bg-slate-700/50 rounded-lg p-6 text-center">
-                  <p className="mb-4">Sign in securely with Civic Identity</p>
-                  <div className="flex justify-center">
-                    <UserButton />
-                  </div>
-                </div>
-                
-                <div className="text-center text-sm text-slate-400">
-                  <p>
-                    By signing in, you agree to our terms and privacy policy. Your data is encrypted and secure.
-                  </p>
-                </div>
+              <div className="flex justify-center">
+                <WalletMultiButton className="!bg-emerald-600 hover:!bg-emerald-500" />
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="bg-slate-900 py-8 w-full mt-auto">
         <div className="container mx-auto px-4">
           <div className="text-center text-slate-400">
@@ -70,5 +45,5 @@ export default async function LoginPage() {
         </div>
       </footer>
     </div>
-  )
-} 
+  );
+}

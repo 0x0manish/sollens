@@ -45,9 +45,7 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **Activity Tracking**: Keep track of recently analyzed tokens, wallets, and transactions
 - **Detailed Reports**: Get comprehensive analysis with actionable insights
 - **Modern UI**: Clean, intuitive interface with clear data visualization
-- **Wallet Integration**: Seamless Solana wallet connection using Civic Auth and web3
-- **Civic Web3 Wallet**: Built-in Solana wallet functionality with secure key management
-- **Wallet Funding & Withdrawal**: Deposit and withdraw SOL to your integrated Civic wallet
+- **Wallet Integration**: Seamless Solana wallet connection using Solana Wallet Adapter
 - **Improved Authentication**: Robust login flow with reliable state transitions and profile image handling
 - **Consistent Dark Theme**: Smooth transitions between pages with no white flashes
 
@@ -61,8 +59,8 @@ Sollens is a comprehensive analysis and verification platform for Solana tokens,
 - **React Hook Form**: Form validation library
 
 ### Authentication
-- **Civic Auth**: Web3 authentication service with enhanced reliability
-- **GlobalLoadingProvider**: Custom provider for seamless authentication transitions
+- **Solana Wallet Adapter**: Connect to popular wallets like Phantom
+- **GlobalLoadingProvider**: Custom provider for smooth page transitions
 
 ### Blockchain Integration
 - **@solana/web3.js**: Library for interacting with the Solana blockchain
@@ -105,9 +103,6 @@ pnpm install
 3. Configure environment variables
 Create a `.env.local` file in the root directory with the following variables:
 ```
-# Authentication
-CIVIC_CLIENT_ID=your_civic_client_id
-
 # Solana Configuration
 NEXT_PUBLIC_SOLANA_RPC_ENDPOINT=your_solana_rpc_endpoint
 NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
@@ -139,9 +134,6 @@ Sollens can be deployed to various hosting platforms. The recommended approach i
 The following environment variables are required for full functionality:
 
 ```
-# Authentication
-CIVIC_CLIENT_ID=your_civic_client_id
-
 # Solana Configuration
 NEXT_PUBLIC_SOLANA_RPC_ENDPOINT=your_solana_rpc_endpoint
 NEXT_PUBLIC_CREDITS_RECIPIENT_WALLET=your_credits_recipient_wallet
@@ -166,9 +158,9 @@ SOLSCAN_API_TOKEN=your_solscan_api_token
 
 ## Application Flow
 
-1. **Authentication Flow**
-   - User authenticates using Civic Auth
-   - System verifies authentication state
+1. **Wallet Connection Flow**
+   - User connects a wallet using Wallet Adapter
+   - Connection state is maintained across pages
    - Profile data loads with reliable image handling
    - Smooth transition to dashboard with no white flash
 
@@ -201,13 +193,6 @@ Added integration with Webacy's API to detect sanctioned wallet addresses, provi
 ### RugCheck API Integration for Token Safety Verification
 Enhanced token analysis with comprehensive RugCheck API integration, enabling advanced scam detection, token verification, and risk assessment capabilities.
 
-### Civic Wallet Funding and Withdrawal
-Implemented complete wallet functionality allowing users to:
-- Create a Solana wallet through Civic authentication
-- View wallet balance in real-time
-- Deposit SOL to fund analysis activities
-- Withdraw SOL to external wallets with transaction confirmation
-- Track transaction history of deposits and withdrawals
 
 ### Improved Authentication Flow
 Enhanced the user authentication experience with:

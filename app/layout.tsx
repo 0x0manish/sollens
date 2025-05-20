@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { CivicAuthProvider } from "@civic/auth-web3/nextjs"
+import { SolanaWalletProvider } from "@/components/SolanaWalletProvider"
+import '@solana/wallet-adapter-react-ui/styles.css'
 import { GlobalLoadingProvider } from '@/components/GlobalLoadingProvider'
 
 export const metadata: Metadata = {
@@ -34,9 +35,9 @@ export default function RootLayout({
     <html lang="en" className="bg-slate-900">
       <body className="bg-slate-900 text-white min-h-screen">
         <GlobalLoadingProvider>
-          <CivicAuthProvider>
+          <SolanaWalletProvider>
             {children}
-          </CivicAuthProvider>
+          </SolanaWalletProvider>
         </GlobalLoadingProvider>
       </body>
     </html>
