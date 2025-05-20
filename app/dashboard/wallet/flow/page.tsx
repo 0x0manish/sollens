@@ -1,8 +1,6 @@
-import { getUser } from "@civic/auth-web3/nextjs"
 import { Search, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
 import { TransactionFlowVisualization } from "@/components/TransactionFlowVisualization"
 import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
@@ -14,12 +12,6 @@ type PageProps = {
 };
 
 export default async function TransactionFlowPage({ params, searchParams }: PageProps) {
-  const user = await getUser()
-  
-  // Redirect to login if user is not authenticated
-  if (!user) {
-    redirect('/login')
-  }
   
   // Get wallet address from query parameters using await
   const resolvedSearchParams = await searchParams;

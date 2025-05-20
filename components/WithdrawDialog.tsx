@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, ArrowRight } from "lucide-react";
 import { Connection, PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { 
   Dialog, 
   DialogContent, 
@@ -38,17 +39,14 @@ interface WithdrawDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   walletBalance: number | null;
-  walletPublicKey: any;
-  solanaWallet: any;
 }
 
-export function WithdrawDialog({ 
-  open, 
-  onOpenChange, 
-  walletBalance, 
-  walletPublicKey,
-  solanaWallet 
+export function WithdrawDialog({
+  open,
+  onOpenChange,
+  walletBalance
 }: WithdrawDialogProps) {
+  const { publicKey, sendTransaction } = useWallet();
   const [destinationAddress, setDestinationAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -74,7 +72,7 @@ export function WithdrawDialog({
   const isValidAmount = !isNaN(Number(amount)) && Number(amount) > 0 && walletBalance !== null && Number(amount) <= walletBalance;
   
   const handleWithdraw = async () => {
-    if (!isValidAddress || !isValidAmount || !walletPublicKey) {
+    if (!isValidAddress || !isValidAmount || !publicKey) {
       return;
     }
     
@@ -91,20 +89,7 @@ export function WithdrawDialog({
       
       const connection = new Connection(rpcEndpoint);
       
-      // Convert string address to PublicKey if needed
-      let solanaPublicKey;
-      if (typeof walletPublicKey === 'string') {
-        solanaPublicKey = new PublicKey(walletPublicKey);
-      } else if (walletPublicKey.toBase58) {
-        // It's already a PublicKey object
-        solanaPublicKey = walletPublicKey;
-      } else if (walletPublicKey.toString) {
-        // It might be another object with a toString method
-        solanaPublicKey = new PublicKey(walletPublicKey.toString());
-      } else {
-        console.error("Invalid public key format:", walletPublicKey);
-        throw new Error("Invalid public key format");
-      }
+      const solanaPublicKey = publicKey;
       
       // Close our dialog first before attempting transaction
       onOpenChange(false);
@@ -121,11 +106,9 @@ export function WithdrawDialog({
         })
       );
       
-      // Use the Civic solana wallet to sign and send the transaction
+      // Sign and send the transaction with the connected wallet
       try {
-        // Wrap the call in our silenceConsoleError helper
-        const transactionPromise = solanaWallet.sendTransaction(transaction, connection);
-        const signature = await silenceConsoleError(transactionPromise) as string;
+        const signature = await silenceConsoleError(sendTransaction(transaction, connection)) as string;
         
         // Wait for confirmation
         await connection.confirmTransaction(signature, 'confirmed');

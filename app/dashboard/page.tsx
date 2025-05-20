@@ -1,7 +1,5 @@
-import { getUser } from "@civic/auth-web3/nextjs"
 import { Search, History } from "lucide-react"
 import Link from "next/link"
-import { redirect } from 'next/navigation'
 import { UserProfile } from "@/components/UserProfile"
 import { RecentActivity } from "@/components/RecentActivity"
 import { EnhancedSearchForm } from "@/components/EnhancedSearchForm"
@@ -11,12 +9,6 @@ import { SolanaChainInfo } from "@/components/SolanaChainInfo"
 import { DashboardHeader } from "@/components/DashboardHeader"
 
 export default async function DashboardPage() {
-  const user = await getUser()
-  
-  // Redirect to login if user is not authenticated
-  if (!user) {
-    redirect('/login')
-  }
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-900 to-slate-800 text-white">

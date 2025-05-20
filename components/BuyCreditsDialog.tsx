@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Coins, Check } from "lucide-react";
 import { Connection, PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { 
   Dialog, 
   DialogContent, 
@@ -31,17 +32,14 @@ interface BuyCreditsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   walletBalance: number | null;
-  walletPublicKey: any;
-  solanaWallet: any;
 }
 
-export function BuyCreditsDialog({ 
-  open, 
-  onOpenChange, 
-  walletBalance, 
-  walletPublicKey,
-  solanaWallet 
+export function BuyCreditsDialog({
+  open,
+  onOpenChange,
+  walletBalance
 }: BuyCreditsDialogProps) {
+  const { publicKey, sendTransaction } = useWallet();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
@@ -66,7 +64,7 @@ export function BuyCreditsDialog({
   const hasSufficientBalance = walletBalance !== null && walletBalance >= CREDIT_PRICE_SOL;
   
   const handleBuyCredits = async () => {
-    if (!hasSufficientBalance || !walletPublicKey) {
+    if (!hasSufficientBalance || !publicKey) {
       return;
     }
     
@@ -83,18 +81,7 @@ export function BuyCreditsDialog({
       
       const connection = new Connection(rpcEndpoint);
       
-      // Convert string address to PublicKey if needed
-      let solanaPublicKey;
-      if (typeof walletPublicKey === 'string') {
-        solanaPublicKey = new PublicKey(walletPublicKey);
-      } else if (walletPublicKey.toBase58) {
-        solanaPublicKey = walletPublicKey;
-      } else if (walletPublicKey.toString) {
-        solanaPublicKey = new PublicKey(walletPublicKey.toString());
-      } else {
-        console.error("Invalid public key format:", walletPublicKey);
-        throw new Error("Invalid public key format");
-      }
+      const solanaPublicKey = publicKey;
       
       // Close our dialog first before attempting transaction
       onOpenChange(false);
@@ -111,10 +98,9 @@ export function BuyCreditsDialog({
         })
       );
       
-      // Use the Civic solana wallet to sign and send the transaction
+      // Sign and send the transaction with the connected wallet
       try {
-        const transactionPromise = solanaWallet.sendTransaction(transaction, connection);
-        const signature = await silenceConsoleError(transactionPromise) as string;
+        const signature = await silenceConsoleError(sendTransaction(transaction, connection)) as string;
         
         // Wait for confirmation
         await connection.confirmTransaction(signature, 'confirmed');

@@ -1,17 +1,9 @@
-import { getUser } from "@civic/auth-web3/nextjs";
 import { Search, ArrowLeft, History } from "lucide-react";
 import Link from "next/link";
-import { redirect } from 'next/navigation';
 import { UserProfile } from "@/components/UserProfile";
 import { TokenHistory } from "@/components/TokenHistory";
 
 export default async function TokenHistoryPage() {
-  const user = await getUser();
-  
-  // Redirect to login if user is not authenticated
-  if (!user) {
-    redirect('/login');
-  }
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-900 to-slate-800 text-white">
